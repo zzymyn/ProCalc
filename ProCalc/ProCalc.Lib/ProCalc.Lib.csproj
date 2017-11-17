@@ -42,17 +42,17 @@
   <ItemGroup>
     <Compile Include="MPIR\MPF.cs" />
     <Compile Include="MPIR\MPIR.cs" />
-    <Compile Include="MPIR\MPIR_gen.cs">
+    <Compile Include="MPIR\MPIR.gen.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>MPIR_gen.tt</DependentUpon>
+      <DependentUpon>MPIR.tt</DependentUpon>
     </Compile>
     <Compile Include="MPIR\MPQ.cs" />
     <Compile Include="MPIR\MPZ.cs" />
-    <Compile Include="MPIR\MPZ_gen.cs">
+    <Compile Include="MPIR\MPZ.gen.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>MPZ_gen.tt</DependentUpon>
+      <DependentUpon>MPZ.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -69,13 +69,13 @@
       <Link>mpir.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="MPIR\MPIR_gen.tt">
+    <Content Include="MPIR\MPIR.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>MPIR_gen.cs</LastGenOutput>
+      <LastGenOutput>MPIR.gen.cs</LastGenOutput>
     </Content>
-    <Content Include="MPIR\MPZ_gen.tt">
+    <Content Include="MPIR\MPZ.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>MPZ_gen.cs</LastGenOutput>
+      <LastGenOutput>MPZ.gen.cs</LastGenOutput>
     </Content>
   </ItemGroup>
   <ItemGroup>
