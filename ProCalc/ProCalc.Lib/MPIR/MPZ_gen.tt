@@ -6,51 +6,51 @@
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#
-	var Inits = new []
-	{
-		new { Type = "MPZ", InitFunc = "mpz_init_set" },
-		new { Type = "long", InitFunc = "mpz_init_set_si" },
-		new { Type = "ulong", InitFunc = "mpz_init_set_ui" },
-		new { Type = "double", InitFunc = "mpz_init_set_d" },
-	};
+    var Inits = new []
+    {
+        new { Type = "MPZ", InitFunc = "mpz_init_set" },
+        new { Type = "long", InitFunc = "mpz_init_set_si" },
+        new { Type = "ulong", InitFunc = "mpz_init_set_ui" },
+        new { Type = "double", InitFunc = "mpz_init_set_d" },
+    };
 
-	var Convs = new []
-	{
-		new { Type = "MPF", Mode = "explicit", },
-		new { Type = "MPQ", Mode = "explicit", },
-		new { Type = "int", Mode = "implicit", },
-		new { Type = "uint", Mode = "implicit", },
-		new { Type = "long", Mode = "implicit", },
-		new { Type = "ulong", Mode = "implicit", },
-		new { Type = "double", Mode = "explicit", },
-	};
+    var Convs = new []
+    {
+        new { Type = "MPF", Mode = "explicit", },
+        new { Type = "MPQ", Mode = "explicit", },
+        new { Type = "int", Mode = "implicit", },
+        new { Type = "uint", Mode = "implicit", },
+        new { Type = "long", Mode = "implicit", },
+        new { Type = "ulong", Mode = "implicit", },
+        new { Type = "double", Mode = "explicit", },
+    };
 
-	var UOps = new []
-	{
-		new { Op = "-", Func = "mpz_neg" },
-	};
+    var UOps = new []
+    {
+        new { Op = "-", Func = "mpz_neg" },
+    };
 
-	var BinOps = new []
-	{
-		new { Op = "+", Func = "mpz_add" },
-		new { Op = "-", Func = "mpz_sub" },
-		new { Op = "*", Func = "mpz_mul" },
-		new { Op = "/", Func = "mpz_tdiv_q" },
-		new { Op = "%", Func = "mpz_tdiv_r" },
-		new { Op = "&", Func = "mpz_and" },
-		new { Op = "|", Func = "mpz_ior" },
-		new { Op = "^", Func = "mpz_xor" },
-	};
+    var BinOps = new []
+    {
+        new { Op = "+", Func = "mpz_add" },
+        new { Op = "-", Func = "mpz_sub" },
+        new { Op = "*", Func = "mpz_mul" },
+        new { Op = "/", Func = "mpz_tdiv_q" },
+        new { Op = "%", Func = "mpz_tdiv_r" },
+        new { Op = "&", Func = "mpz_and" },
+        new { Op = "|", Func = "mpz_ior" },
+        new { Op = "^", Func = "mpz_xor" },
+    };
 
-	var ComparisonOps = new []
-	{
-		new { Op = "<", },
-		new { Op = ">", },
-		new { Op = "<=", },
-		new { Op = ">=", },
-		new { Op = "==", },
-		new { Op = "!=", },
-	};
+    var ComparisonOps = new []
+    {
+        new { Op = "<", },
+        new { Op = ">", },
+        new { Op = "<=", },
+        new { Op = ">=", },
+        new { Op = "==", },
+        new { Op = "!=", },
+    };
 
 #>
 using System;
@@ -59,10 +59,10 @@ namespace ProCalc.Lib.MPIR
 {
     public partial class MPZ
     {
-		// Constructors:
+        // Constructors:
 <#
-		foreach (var op in Inits)
-		{
+        foreach (var op in Inits)
+        {
 #>
         public MPZ(<#= op.Type #> a)
             : base(IntPtr.Zero, true)
@@ -72,27 +72,27 @@ namespace ProCalc.Lib.MPIR
         }
 
 <#
-		}
+        }
 #>
 
-		// Conversions:
+        // Conversions:
 <#
-		foreach (var op in Convs)
-		{
+        foreach (var op in Convs)
+        {
 #>
         public static <#= op.Mode #> operator MPZ(<#= op.Type #> a)
         {
-			return new MPZ(a);
+            return new MPZ(a);
         }
 
 <#
-		}
+        }
 #>
 
-		// Unary ops:
+        // Unary ops:
 <#
-		foreach (var op in UOps)
-		{
+        foreach (var op in UOps)
+        {
 #>
         public static MPZ operator <#= op.Op #>(MPZ a)
         {
@@ -102,13 +102,13 @@ namespace ProCalc.Lib.MPIR
         }
 
 <#
-		}
+        }
 #>
 
-		// Binary ops:
+        // Binary ops:
 <#
-		foreach (var op in BinOps)
-		{
+        foreach (var op in BinOps)
+        {
 #>
         public static MPZ operator <#= op.Op #>(MPZ a, MPZ b)
         {
@@ -118,13 +118,13 @@ namespace ProCalc.Lib.MPIR
         }
 
 <#
-		}
+        }
 #>
 
-		// Comparison ops:
+        // Comparison ops:
 <#
-		foreach (var op in ComparisonOps)
-		{
+        foreach (var op in ComparisonOps)
+        {
 #>
         public static bool operator <#= op.Op #>(MPZ a, MPZ b)
         {
@@ -132,7 +132,7 @@ namespace ProCalc.Lib.MPIR
         }
 
 <#
-		}
+        }
 #>
     }
 }

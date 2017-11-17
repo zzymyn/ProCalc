@@ -28,27 +28,27 @@ namespace ProCalc.Lib.MPIR
 
 foreach (var line in File.ReadLines(mpirHeader))
 {
-	var m = MPZRegex.Match(line);
-	if (!m.Success)
-		continue;
+    var m = MPZRegex.Match(line);
+    if (!m.Success)
+        continue;
 
-	var name = m.Groups["Name"].Value;
-	var returnType = ConvertReturnType(m.Groups["ReturnType"].Value);
-	var args = m.Groups["Args"].Captures.Cast<Capture>()
-		.Select(a => ConvertArgType(a.Value));
+    var name = m.Groups["Name"].Value;
+    var returnType = ConvertReturnType(m.Groups["ReturnType"].Value);
+    var args = m.Groups["Args"].Captures.Cast<Capture>()
+        .Select(a => ConvertArgType(a.Value));
 
-	if (string.IsNullOrEmpty(returnType) || args.Any(a => string.IsNullOrEmpty(a)))
-	{
+    if (string.IsNullOrEmpty(returnType) || args.Any(a => string.IsNullOrEmpty(a)))
+    {
 #>
-		// Skipped <#= name #> - <#= string.Join(",", m.Groups["Args"].Captures.Cast<Capture>().Select(a => a.Value)) #> => <#= m.Groups["ReturnType"].Value #>
+        // Skipped <#= name #> - <#= string.Join(",", m.Groups["Args"].Captures.Cast<Capture>().Select(a => a.Value)) #> => <#= m.Groups["ReturnType"].Value #>
 <#
-		continue;
-	}
+        continue;
+    }
 
-	var argsWithNames = args.Zip(GenArgNames(), (a, b) => a + " a" + b);
+    var argsWithNames = args.Zip(GenArgNames(), (a, b) => a + " a" + b);
 
 #>
-		[DllImport("mpir.dll", EntryPoint = "__g<#=name#>")]
+        [DllImport("mpir.dll", EntryPoint = "__g<#=name#>")]
         internal static extern <#= returnType #> <#= name #>(<#= string.Join(", ", argsWithNames) #>);
 <#
 }
@@ -61,68 +61,68 @@ foreach (var line in File.ReadLines(mpirHeader))
 
 string ConvertReturnType(string mpirType)
 {
-	switch (mpirType)
-	{
-	case "void":
-		return "void";
-	case "int":
-		return "int";
-	case "mpir_ui":
-		return "ulong";
-	case "size_t":
-		return "ulong";
-	case "double":
-		return "double";
-	case "char *":
-		return "/* char* */ IntPtr";
-	default:
-		return null;
-	}
+    switch (mpirType)
+    {
+    case "void":
+        return "void";
+    case "int":
+        return "int";
+    case "mpir_ui":
+        return "ulong";
+    case "size_t":
+        return "ulong";
+    case "double":
+        return "double";
+    case "char *":
+        return "/* char* */ IntPtr";
+    default:
+        return null;
+    }
 }
 
 string ConvertArgType(string mpirType)
 {
-	switch (mpirType)
-	{
-	case "mpz_ptr":
-		return "[In, Out] MPZ";
-	case "mpz_srcptr":
-		return "[In] MPZ";
-	case "mpf_ptr":
-		return "[In, Out] MPF";
-	case "mpf_srcptr":
-		return "[In] MPF";
-	case "mpq_ptr":
-		return "[In, Out] MPQ";
-	case "mpq_srcptr":
-		return "[In] MPQ";
-	case "__gmp_const char *":
-		return "[MarshalAs(UnmanagedType.LPStr)] string";
-	case "char *":
-		return "[MarshalAs(UnmanagedType.LPStr)] StringBuilder";
-	case "mp_bitcnt_t":
-		return "ulong";
-	case "int":
-		return "int";
-	case "double":
-		return "double";
-	case "mpir_si":
-		return "long";
-	case "mpir_ui":
-		return "ulong";
-	case "size_t":
-		return "ulong";
-	default:
-		return "";
-	}
+    switch (mpirType)
+    {
+    case "mpz_ptr":
+        return "[In, Out] MPZ";
+    case "mpz_srcptr":
+        return "[In] MPZ";
+    case "mpf_ptr":
+        return "[In, Out] MPF";
+    case "mpf_srcptr":
+        return "[In] MPF";
+    case "mpq_ptr":
+        return "[In, Out] MPQ";
+    case "mpq_srcptr":
+        return "[In] MPQ";
+    case "__gmp_const char *":
+        return "[MarshalAs(UnmanagedType.LPStr)] string";
+    case "char *":
+        return "[MarshalAs(UnmanagedType.LPStr)] StringBuilder";
+    case "mp_bitcnt_t":
+        return "ulong";
+    case "int":
+        return "int";
+    case "double":
+        return "double";
+    case "mpir_si":
+        return "long";
+    case "mpir_ui":
+        return "ulong";
+    case "size_t":
+        return "ulong";
+    default:
+        return "";
+    }
 }
 
 IEnumerable<string> GenArgNames()
 {
-	for (int i = 0; ; ++i)
-	{
-		yield return i.ToString();
-	}
+    for (int i = 0; ; ++i)
+    {
+        yield return i.ToString();
+    }
 }
 
 #>
