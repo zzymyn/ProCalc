@@ -3,7 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProCalc", "ProCalc\ProCalc.csproj", "{001EF054-6E60-4291-B59A-FFACA0DFAA96}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProCalc.UI", "ProCalc\ProCalc.UI.csproj", "{001EF054-6E60-4291-B59A-FFACA0DFAA96}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProCalc.Lib", "ProCalc.Lib\ProCalc.Lib.csproj", "{D03513BF-EC51-4B5A-B338-FA9C6CF9A26B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dll_mpir_gc", "..\mpir\build.vc14\dll_mpir_gc\dll_mpir_gc.vcxproj", "{10B31DE4-3383-4BBE-95D2-4FA82F3C07BC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "mpir", "mpir", "{C6D557B3-B679-495C-AFC6-CC91825B40FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProCalc.Tests", "ProCalc.Tests\ProCalc.Tests.csproj", "{ACC0518C-D0F4-4CD6-AB18-9E165EC1179D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +23,23 @@ Global
 		{001EF054-6E60-4291-B59A-FFACA0DFAA96}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{001EF054-6E60-4291-B59A-FFACA0DFAA96}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{001EF054-6E60-4291-B59A-FFACA0DFAA96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D03513BF-EC51-4B5A-B338-FA9C6CF9A26B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D03513BF-EC51-4B5A-B338-FA9C6CF9A26B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D03513BF-EC51-4B5A-B338-FA9C6CF9A26B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D03513BF-EC51-4B5A-B338-FA9C6CF9A26B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10B31DE4-3383-4BBE-95D2-4FA82F3C07BC}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{10B31DE4-3383-4BBE-95D2-4FA82F3C07BC}.Debug|Any CPU.Build.0 = Debug|x64
+		{10B31DE4-3383-4BBE-95D2-4FA82F3C07BC}.Release|Any CPU.ActiveCfg = Release|x64
+		{10B31DE4-3383-4BBE-95D2-4FA82F3C07BC}.Release|Any CPU.Build.0 = Release|x64
+		{ACC0518C-D0F4-4CD6-AB18-9E165EC1179D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACC0518C-D0F4-4CD6-AB18-9E165EC1179D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACC0518C-D0F4-4CD6-AB18-9E165EC1179D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACC0518C-D0F4-4CD6-AB18-9E165EC1179D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{10B31DE4-3383-4BBE-95D2-4FA82F3C07BC} = {C6D557B3-B679-495C-AFC6-CC91825B40FC}
 	EndGlobalSection
 EndGlobal
