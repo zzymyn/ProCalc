@@ -1,0 +1,140 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#
+	var Inits = new []
+	{
+		new { Type = "MPZ", InitFunc = "mpz_init_set" },
+		new { Type = "long", InitFunc = "mpz_init_set_si" },
+		new { Type = "ulong", InitFunc = "mpz_init_set_ui" },
+		new { Type = "double", InitFunc = "mpz_init_set_d" },
+	};
+
+	var Convs = new []
+	{
+		new { Type = "MPF", Mode = "explicit", },
+		new { Type = "MPQ", Mode = "explicit", },
+		new { Type = "int", Mode = "implicit", },
+		new { Type = "uint", Mode = "implicit", },
+		new { Type = "long", Mode = "implicit", },
+		new { Type = "ulong", Mode = "implicit", },
+		new { Type = "double", Mode = "explicit", },
+	};
+
+	var UOps = new []
+	{
+		new { Op = "-", Func = "mpz_neg" },
+	};
+
+	var BinOps = new []
+	{
+		new { Op = "+", Func = "mpz_add" },
+		new { Op = "-", Func = "mpz_sub" },
+		new { Op = "*", Func = "mpz_mul" },
+		new { Op = "/", Func = "mpz_tdiv_q" },
+		new { Op = "%", Func = "mpz_tdiv_r" },
+		new { Op = "&", Func = "mpz_and" },
+		new { Op = "|", Func = "mpz_ior" },
+		new { Op = "^", Func = "mpz_xor" },
+	};
+
+	var ComparisonOps = new []
+	{
+		new { Op = "<", },
+		new { Op = ">", },
+		new { Op = "<=", },
+		new { Op = ">=", },
+		new { Op = "==", },
+		new { Op = "!=", },
+	};
+
+#>
+using System;
+using System.Text;
+using System.Runtime.InteropServices;
+
+namespace ProCalc.Lib.MPIR
+{
+    public partial class MPZ
+    {
+		// Constructors:
+<#
+		foreach (var op in Inits)
+		{
+#>
+        public MPZ(<#= op.Type #> a)
+            : base(IntPtr.Zero, true)
+        {
+            Alloc();
+            MPIR.<#= op.InitFunc #>(this, a);
+        }
+
+<#
+		}
+#>
+
+		// Conversions:
+<#
+		foreach (var op in Convs)
+		{
+#>
+        public static <#= op.Mode #> operator MPZ(<#= op.Type #> a)
+        {
+			return new MPZ(a);
+        }
+
+<#
+		}
+#>
+
+		// Unary ops:
+<#
+		foreach (var op in UOps)
+		{
+#>
+        public static MPZ operator <#= op.Op #>(MPZ a)
+        {
+            var r = new MPZ();
+            MPIR.<#= op.Func #>(r, a);
+            return r;
+        }
+
+<#
+		}
+#>
+
+		// Binary ops:
+<#
+		foreach (var op in BinOps)
+		{
+#>
+        public static MPZ operator <#= op.Op #>(MPZ a, MPZ b)
+        {
+            var r = new MPZ();
+            MPIR.<#= op.Func #>(r, a, b);
+            return r;
+        }
+
+<#
+		}
+#>
+
+		// Comparison ops:
+<#
+		foreach (var op in ComparisonOps)
+		{
+#>
+        public static bool operator <#= op.Op #>(MPZ a, MPZ b)
+        {
+            return a.CompareTo(b) <#= op.Op #> 0;
+        }
+
+<#
+		}
+#>
+    }
+}

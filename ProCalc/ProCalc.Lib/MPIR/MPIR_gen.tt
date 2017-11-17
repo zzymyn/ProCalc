@@ -22,7 +22,7 @@ using System.Runtime.InteropServices;
 
 namespace ProCalc.Lib.MPIR
 {
-    public static partial class MPIR
+    internal static partial class MPIR
     {
 <#
 

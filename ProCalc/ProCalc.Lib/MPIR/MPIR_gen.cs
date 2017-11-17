@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace ProCalc.Lib.MPIR
 {
-    public static partial class MPIR
+    internal static partial class MPIR
     {
 		// Skipped gmp_randinit_default - gmp_randstate_t => void
 		// Skipped gmp_randinit_lc_2exp_size - gmp_randstate_t,mp_bitcnt_t => int

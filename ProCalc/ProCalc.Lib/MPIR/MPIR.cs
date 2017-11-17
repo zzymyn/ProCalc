@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace ProCalc.Lib.MPIR
 {
-    public static partial class MPIR
+    internal static partial class MPIR
     {
-        public const int MPZSize = 128;
-        public const int MPFSize = 192;
-        public const int MPQSize = 256;
+        internal const int MPZSize = 128;
+        internal const int MPFSize = 192;
+        internal const int MPQSize = 256;
     }
 }
