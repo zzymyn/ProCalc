@@ -9,6 +9,12 @@ namespace ProCalc.Tests
     public class MPIR_MPZ_Tests
     {
         [TestMethod]
+        public void Is64Bit()
+        {
+            Assert.AreEqual(8, IntPtr.Size, "Must run tests in 64-bit mode");
+        }
+
+        [TestMethod]
         public void InitAndDestroyTest()
         {
             using (var a = new MPZ())
