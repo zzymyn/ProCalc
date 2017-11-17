@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ProCalc.Lib.MPIR
 {
-    public class MPZ : SafeHandle
+    public class MPQ : SafeHandle
     {
         public override bool IsInvalid
         {
@@ -17,16 +17,16 @@ namespace ProCalc.Lib.MPIR
             }
         }
 
-        public MPZ()
+        public MPQ()
             : base(IntPtr.Zero, true)
         {
-            SetHandle(Marshal.AllocHGlobal(MPIR.MPZSize));
-            MPIR.mpz_init(this);
+            SetHandle(Marshal.AllocHGlobal(MPIR.MPQSize));
+            MPIR.mpq_init(this);
         }
 
         protected override bool ReleaseHandle()
         {
-            MPIR.mpz_clear(this);
+            MPIR.mpq_clear(this);
             Marshal.FreeHGlobal(handle);
             return true;
         }

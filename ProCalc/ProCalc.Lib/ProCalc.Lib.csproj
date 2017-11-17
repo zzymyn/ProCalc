@@ -40,7 +40,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MPIR\MPF.cs" />
     <Compile Include="MPIR\MPIR.cs" />
+    <Compile Include="MPIR\MPIR_auto.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MPIR_auto.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MPIR\MPQ.cs" />
     <Compile Include="MPIR\MPZ.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -57,6 +64,13 @@
       <Link>mpir.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="MPIR\MPIR_auto.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>MPIR_auto.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,0 +1,128 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ assembly name="EnvDTE" #>
+<#
+
+var MPZRegex = new Regex(@"__GMP_DECLSPEC\s*(?<ReturnType>[ _a-zA-Z0-9*]+?)\s*(?<Name>\w+)\s*__GMP_PROTO\s*\(\((?<Args>[ _a-zA-Z0-9*]+)(,\s*(?<Args>[ _a-zA-Z0-9*]+))*\)\)(\s*\w+)*");
+
+var dte = (EnvDTE.DTE) ((IServiceProvider)Host).GetService(typeof(EnvDTE.DTE));
+var solutionDir = Path.GetDirectoryName(dte.Solution.FullName);
+var mpirHeader = Path.Combine(solutionDir, "..", "mpir", "mpir.h");
+
+#>
+using System;
+using System.Text;
+using System.Runtime.InteropServices;
+
+namespace ProCalc.Lib.MPIR
+{
+    public static partial class MPIR
+    {
+<#
+
+foreach (var line in File.ReadLines(mpirHeader))
+{
+	var m = MPZRegex.Match(line);
+	if (!m.Success)
+		continue;
+
+	var name = m.Groups["Name"].Value;
+	var returnType = ConvertReturnType(m.Groups["ReturnType"].Value);
+	var args = m.Groups["Args"].Captures.Cast<Capture>()
+		.Select(a => ConvertArgType(a.Value));
+
+	if (string.IsNullOrEmpty(returnType) || args.Any(a => string.IsNullOrEmpty(a)))
+	{
+#>
+		// Skipped <#= name #> - <#= string.Join(",", m.Groups["Args"].Captures.Cast<Capture>().Select(a => a.Value)) #> => <#= m.Groups["ReturnType"].Value #>
+<#
+		continue;
+	}
+
+	var argsWithNames = args.Zip(GenArgNames(), (a, b) => a + " a" + b);
+
+#>
+		[DllImport("mpir.dll", EntryPoint = "__g<#=name#>")]
+        internal static extern <#= returnType #> <#= name #>(<#= string.Join(", ", argsWithNames) #>);
+<#
+}
+
+#>
+    }
+}
+
+<#+
+
+string ConvertReturnType(string mpirType)
+{
+	switch (mpirType)
+	{
+	case "void":
+		return "void";
+	case "int":
+		return "int";
+	case "mpir_ui":
+		return "ulong";
+	case "size_t":
+		return "ulong";
+	case "double":
+		return "double";
+	case "char *":
+		return "/* char* */ IntPtr";
+	default:
+		return null;
+	}
+}
+
+string ConvertArgType(string mpirType)
+{
+	switch (mpirType)
+	{
+	case "mpz_ptr":
+		return "[In, Out] MPZ";
+	case "mpz_srcptr":
+		return "[In] MPZ";
+	case "mpf_ptr":
+		return "[In, Out] MPF";
+	case "mpf_srcptr":
+		return "[In] MPF";
+	case "mpq_ptr":
+		return "[In, Out] MPQ";
+	case "mpq_srcptr":
+		return "[In] MPQ";
+	case "__gmp_const char *":
+		return "[MarshalAs(UnmanagedType.LPStr)] string";
+	case "char *":
+		return "[MarshalAs(UnmanagedType.LPStr)] StringBuilder";
+	case "mp_bitcnt_t":
+		return "ulong";
+	case "int":
+		return "int";
+	case "double":
+		return "double";
+	case "mpir_si":
+		return "long";
+	case "mpir_ui":
+		return "ulong";
+	case "size_t":
+		return "ulong";
+	default:
+		return "";
+	}
+}
+
+IEnumerable<string> GenArgNames()
+{
+	for (int i = 0; ; ++i)
+	{
+		yield return i.ToString();
+	}
+}
+
+#>

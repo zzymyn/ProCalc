@@ -6,14 +6,14 @@ using System.Runtime.InteropServices;
 namespace ProCalc.Tests
 {
     [TestClass]
-    public class MPIR_Tests
+    public class MPIR_MPZ_Tests
     {
         [TestMethod]
         public void InitTest()
         {
-            var a = Marshal.AllocHGlobal(MPIR.MPZSize);
-            MPIR.mpz_init(a);
-            MPIR.mpz_clear(a);
+            using (var a = new MPZ())
+            {
+            }
         }
     }
 }
