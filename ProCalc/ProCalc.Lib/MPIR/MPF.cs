@@ -7,28 +7,8 @@ using System.Threading.Tasks;
 
 namespace ProCalc.Lib.MPIR
 {
-    public class MPF : SafeHandle
+    public class MPF
     {
-        public override bool IsInvalid
-        {
-            get
-            {
-                return handle != IntPtr.Zero;
-            }
-        }
-
-        public MPF()
-            : base(IntPtr.Zero, true)
-        {
-            SetHandle(Marshal.AllocHGlobal(MPIR.MPFSize));
-            MPIR.mpf_init(this);
-        }
-
-        protected override bool ReleaseHandle()
-        {
-            MPIR.mpf_clear(this);
-            Marshal.FreeHGlobal(handle);
-            return true;
-        }
+        internal MPIR.mpf_t S;
     }
 }

@@ -8,15 +8,17 @@
 <#
     var Inits = new []
     {
-        new { Type = "long", InitFunc = "mpz_init_set_si" },
-        new { Type = "ulong", InitFunc = "mpz_init_set_ui" },
-        new { Type = "double", InitFunc = "mpz_init_set_d" },
+        new { Sig = "MPZ a", Args = "ref a.S", InitFunc = "mpq_set_z" },
+        new { Sig = "long a", Args = "a, 1ul", InitFunc = "mpq_set_si" },
+        new { Sig = "long a, ulong b", Args = "a, b", InitFunc = "mpq_set_si" },
+        new { Sig = "ulong a", Args = "a, 1ul", InitFunc = "mpq_set_ui" },
+        new { Sig = "ulong a, ulong b", Args = "a, b", InitFunc = "mpq_set_ui" },
+        new { Sig = "double a", Args = "a", InitFunc = "mpq_set_d" },
     };
 
     var Convs = new []
     {
-        new { Type = "MPF", Mode = "explicit", },
-        new { Type = "MPQ", Mode = "explicit", },
+        new { Type = "MPZ", Mode = "implicit", },
         new { Type = "int", Mode = "implicit", },
         new { Type = "uint", Mode = "implicit", },
         new { Type = "long", Mode = "implicit", },
@@ -26,24 +28,21 @@
 
     var UOps = new []
     {
-        new { Op = "-", Func = "mpz_neg" },
+        new { Op = "-", Func = "mpq_neg" },
     };
 
     var BinOps = new []
     {
-        new { Op = "+", Func = "mpz_add" },
-        new { Op = "-", Func = "mpz_sub" },
-        new { Op = "*", Func = "mpz_mul" },
-        new { Op = "/", Func = "mpz_tdiv_q" },
-        new { Op = "%", Func = "mpz_tdiv_r" },
-        new { Op = "&", Func = "mpz_and" },
-        new { Op = "|", Func = "mpz_ior" },
-        new { Op = "^", Func = "mpz_xor" },
+        new { Op = "+", Func = "mpq_add" },
+        new { Op = "-", Func = "mpq_sub" },
+        new { Op = "*", Func = "mpq_mul" },
+        new { Op = "/", Func = "mpq_div" },
     };
-    
+
     var Funcs = new []
     {
-        new { Name = "Abs", Func = "mpz_abs" },
+        new { Name = "Abs", Func = "mpq_abs" },
+        new { Name = "Inv", Func = "mpq_inv" },
     };
 
     var ComparisonOps = new []
@@ -61,16 +60,18 @@ using System;
 
 namespace ProCalc.Lib.MPIR
 {
-    public partial class MPZ
+    public partial class MPQ
     {
         // Constructors:
 <#
         foreach (var op in Inits)
         {
 #>
-        public MPZ(<#= op.Type #> a)
+        public MPQ(<#= op.Sig #>)
+            : this()
         {
-            MPIR.<#= op.InitFunc #>(ref S, a);
+            MPIR.<#= op.InitFunc #>(ref S, <#= op.Args #>);
+            MPIR.mpq_canonicalize(ref S);
         }
 
 <#
@@ -82,9 +83,9 @@ namespace ProCalc.Lib.MPIR
         foreach (var op in Convs)
         {
 #>
-        public static <#= op.Mode #> operator MPZ(<#= op.Type #> a)
+        public static <#= op.Mode #> operator MPQ(<#= op.Type #> a)
         {
-            return new MPZ(a);
+            return new MPQ(a);
         }
 
 <#
@@ -96,9 +97,9 @@ namespace ProCalc.Lib.MPIR
         foreach (var op in UOps)
         {
 #>
-        public static MPZ operator <#= op.Op #>(MPZ a)
+        public static MPQ operator <#= op.Op #>(MPQ a)
         {
-            var r = new MPZ();
+            var r = new MPQ();
             MPIR.<#= op.Func #>(ref r.S, ref a.S);
             return r;
         }
@@ -112,9 +113,9 @@ namespace ProCalc.Lib.MPIR
         foreach (var op in BinOps)
         {
 #>
-        public static MPZ operator <#= op.Op #>(MPZ a, MPZ b)
+        public static MPQ operator <#= op.Op #>(MPQ a, MPQ b)
         {
-            var r = new MPZ();
+            var r = new MPQ();
             MPIR.<#= op.Func #>(ref r.S, ref a.S, ref b.S);
             return r;
         }
@@ -128,9 +129,9 @@ namespace ProCalc.Lib.MPIR
         foreach (var op in Funcs)
         {
 #>
-        public MPZ <#= op.Name #>()
+        public MPQ <#= op.Name #>()
         {
-            var r = new MPZ();
+            var r = new MPQ();
             MPIR.<#= op.Func #>(ref r.S, ref S);
             return r;
         }
@@ -144,7 +145,7 @@ namespace ProCalc.Lib.MPIR
         foreach (var op in ComparisonOps)
         {
 #>
-        public static bool operator <#= op.Op #>(MPZ a, MPZ b)
+        public static bool operator <#= op.Op #>(MPQ a, MPQ b)
         {
             return a.CompareTo(b) <#= op.Op #> 0;
         }

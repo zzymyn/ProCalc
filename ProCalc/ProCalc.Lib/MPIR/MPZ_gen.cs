@@ -5,32 +5,19 @@ namespace ProCalc.Lib.MPIR
     public partial class MPZ
     {
         // Constructors:
-        public MPZ(MPZ a)
-            : base(IntPtr.Zero, true)
-        {
-            Alloc();
-            MPIR.mpz_init_set(this, a);
-        }
-
         public MPZ(long a)
-            : base(IntPtr.Zero, true)
         {
-            Alloc();
-            MPIR.mpz_init_set_si(this, a);
+            MPIR.mpz_init_set_si(ref S, a);
         }
 
         public MPZ(ulong a)
-            : base(IntPtr.Zero, true)
         {
-            Alloc();
-            MPIR.mpz_init_set_ui(this, a);
+            MPIR.mpz_init_set_ui(ref S, a);
         }
 
         public MPZ(double a)
-            : base(IntPtr.Zero, true)
         {
-            Alloc();
-            MPIR.mpz_init_set_d(this, a);
+            MPIR.mpz_init_set_d(ref S, a);
         }
 
 
@@ -75,7 +62,7 @@ namespace ProCalc.Lib.MPIR
         public static MPZ operator -(MPZ a)
         {
             var r = new MPZ();
-            MPIR.mpz_neg(r, a);
+            MPIR.mpz_neg(ref r.S, ref a.S);
             return r;
         }
 
@@ -84,56 +71,65 @@ namespace ProCalc.Lib.MPIR
         public static MPZ operator +(MPZ a, MPZ b)
         {
             var r = new MPZ();
-            MPIR.mpz_add(r, a, b);
+            MPIR.mpz_add(ref r.S, ref a.S, ref b.S);
             return r;
         }
 
         public static MPZ operator -(MPZ a, MPZ b)
         {
             var r = new MPZ();
-            MPIR.mpz_sub(r, a, b);
+            MPIR.mpz_sub(ref r.S, ref a.S, ref b.S);
             return r;
         }
 
         public static MPZ operator *(MPZ a, MPZ b)
         {
             var r = new MPZ();
-            MPIR.mpz_mul(r, a, b);
+            MPIR.mpz_mul(ref r.S, ref a.S, ref b.S);
             return r;
         }
 
         public static MPZ operator /(MPZ a, MPZ b)
         {
             var r = new MPZ();
-            MPIR.mpz_tdiv_q(r, a, b);
+            MPIR.mpz_tdiv_q(ref r.S, ref a.S, ref b.S);
             return r;
         }
 
         public static MPZ operator %(MPZ a, MPZ b)
         {
             var r = new MPZ();
-            MPIR.mpz_tdiv_r(r, a, b);
+            MPIR.mpz_tdiv_r(ref r.S, ref a.S, ref b.S);
             return r;
         }
 
         public static MPZ operator &(MPZ a, MPZ b)
         {
             var r = new MPZ();
-            MPIR.mpz_and(r, a, b);
+            MPIR.mpz_and(ref r.S, ref a.S, ref b.S);
             return r;
         }
 
         public static MPZ operator |(MPZ a, MPZ b)
         {
             var r = new MPZ();
-            MPIR.mpz_ior(r, a, b);
+            MPIR.mpz_ior(ref r.S, ref a.S, ref b.S);
             return r;
         }
 
         public static MPZ operator ^(MPZ a, MPZ b)
         {
             var r = new MPZ();
-            MPIR.mpz_xor(r, a, b);
+            MPIR.mpz_xor(ref r.S, ref a.S, ref b.S);
+            return r;
+        }
+
+
+        // Funcs:
+        public MPZ Abs()
+        {
+            var r = new MPZ();
+            MPIR.mpz_abs(ref r.S, ref S);
             return r;
         }
 

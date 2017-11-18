@@ -49,6 +49,11 @@
     </Compile>
     <Compile Include="MPIR\MPQ.cs" />
     <Compile Include="MPIR\MPZ.cs" />
+    <Compile Include="MPIR\MPQ_gen.cs">
+      <DependentUpon>MPQ_gen.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="MPIR\MPZ_gen.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -72,6 +77,10 @@
     <Content Include="MPIR\MPIR_gen.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>MPIR_gen.cs</LastGenOutput>
+    </Content>
+    <Content Include="MPIR\MPQ_gen.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>MPQ_gen.cs</LastGenOutput>
     </Content>
     <Content Include="MPIR\MPZ_gen.tt">
       <Generator>TextTemplatingFileGenerator</Generator>

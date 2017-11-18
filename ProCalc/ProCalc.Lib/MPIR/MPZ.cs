@@ -10,33 +10,35 @@ namespace ProCalc.Lib.MPIR
     /// <summary>
     /// Wrapper around MPIR's mpz_t bigint class.
     /// </summary>
-    public partial class MPZ : SafeHandle, IComparable<MPZ>, IEquatable<MPZ>
+    public partial class MPZ : IDisposable, IComparable<MPZ>, IEquatable<MPZ>
     {
-        public override bool IsInvalid
-        {
-            get
-            {
-                return handle != IntPtr.Zero;
-            }
-        }
+        internal MPIR.mpz_t S;
 
         public MPZ()
-            : base(IntPtr.Zero, true)
         {
-            Alloc();
-            MPIR.mpz_init(this);
+            MPIR.mpz_init(ref S);
         }
 
-        public MPZ(MPF a)
-            : this()
+        internal MPZ(ref MPIR.mpz_t a)
         {
-            MPIR.mpz_set_f(this, a);
+            MPIR.mpz_init_set(ref S, ref a);
+        }
+
+        public MPZ(MPZ a)
+            : this(ref a.S)
+        {
         }
 
         public MPZ(MPQ a)
             : this()
         {
-            MPIR.mpz_set_q(this, a);
+            MPIR.mpz_set_q(ref S, ref a.S);
+        }
+
+        public MPZ(MPF a)
+            : this()
+        {
+            MPIR.mpz_set_f(ref S, ref a.S);
         }
 
         public MPZ(string a)
@@ -45,19 +47,22 @@ namespace ProCalc.Lib.MPIR
         }
 
         public MPZ(string a, int numericBase)
-            : base(IntPtr.Zero, true)
         {
-            Alloc();
-            var r = MPIR.mpz_init_set_str(this, a, numericBase);
+            var r = MPIR.mpz_init_set_str(ref S, a, numericBase);
             if (r != 0)
                 throw new FormatException("not a number");
+        }
+
+        ~MPZ()
+        {
+            Free();
         }
 
         public int CompareTo(MPZ a)
         {
             if (ReferenceEquals(a, null))
                 return 1;
-            return MPIR.mpz_cmp(this, a);
+            return MPIR.mpz_cmp(ref S, ref a.S);
         }
 
         public override int GetHashCode()
@@ -84,22 +89,40 @@ namespace ProCalc.Lib.MPIR
 
         public string ToString(int numericBase)
         {
-            var size = (int)MPIR.mpz_sizeinbase(this, numericBase);
-            var sb = new StringBuilder(size + 1);
-            var r = MPIR.mpz_get_str(sb, numericBase, this);
+            var size = (int)MPIR.mpz_sizeinbase(ref S, numericBase) + 1;
+            var sb = new StringBuilder(size);
+            var r = MPIR.mpz_get_str(sb, numericBase, ref S);
             return sb.ToString();
         }
 
-        private void Alloc()
+        public double ToDouble()
         {
-            SetHandle(Marshal.AllocHGlobal(MPIR.MPZSize));
+            return MPIR.mpz_get_d(ref S);
         }
 
-        protected override bool ReleaseHandle()
+        public long ToInt64()
         {
-            MPIR.mpz_clear(this);
-            Marshal.FreeHGlobal(handle);
-            return true;
+            if (MPIR.mpz_fits_si_p(ref S) == 0)
+                throw new OverflowException();
+            return MPIR.mpz_get_si(ref S);
+        }
+
+        public ulong ToUInt64()
+        {
+            if (MPIR.mpz_fits_ui_p(ref S) == 0)
+                throw new OverflowException();
+            return MPIR.mpz_get_ui(ref S);
+        }
+
+        public void Dispose()
+        {
+            Free();
+            GC.SuppressFinalize(this);
+        }
+
+        private void Free()
+        {
+            MPIR.mpz_clear(ref S);
         }
     }
 }

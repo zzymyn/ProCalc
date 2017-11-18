@@ -37,6 +37,16 @@ namespace ProCalc.Tests
         }
 
         [TestMethod]
+        public void ConvEq()
+        {
+            Assert.AreEqual(1, new MPZ(1));
+            Assert.AreEqual(987654321, new MPZ(987654321));
+            Assert.AreEqual(-1, new MPZ(-1));
+            Assert.AreEqual(123456789123456789L, new MPZ(123456789123456789L));
+            Assert.AreEqual(-123456789123456789L, new MPZ(-123456789123456789L));
+        }
+
+        [TestMethod]
         public void ArithTests()
         {
             Assert.AreEqual(new MPZ(2), new MPZ(1) + new MPZ(1));

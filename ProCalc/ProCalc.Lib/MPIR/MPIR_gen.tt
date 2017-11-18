@@ -9,7 +9,7 @@
 <#@ assembly name="EnvDTE" #>
 <#
 
-var MPZRegex = new Regex(@"__GMP_DECLSPEC\s*(?<ReturnType>[ _a-zA-Z0-9*]+?)\s*(?<Name>\w+)\s*__GMP_PROTO\s*\(\((?<Args>[ _a-zA-Z0-9*]+)(,\s*(?<Args>[ _a-zA-Z0-9*]+))*\)\)(\s*\w+)*");
+var MPZRegex = new Regex(@"__GMP_DECLSPEC\s*(?<ReturnType>[ _a-zA-Z0-9*/]+?)\s*(?<Name>\w+)\s*__GMP_PROTO\s*\(\((?<Args>[ _a-zA-Z0-9*]+)(,\s*(?<Args>[ _a-zA-Z0-9*]+))*\)\)(\s*\w+)*");
 
 var dte = (EnvDTE.DTE) ((IServiceProvider)Host).GetService(typeof(EnvDTE.DTE));
 var solutionDir = Path.GetDirectoryName(dte.Solution.FullName);
@@ -67,6 +67,10 @@ string ConvertReturnType(string mpirType)
         return "void";
     case "int":
         return "int";
+    case "mpir_si":
+        return "long";
+    case "/* signed */ mpir_si":
+        return "long";
     case "mpir_ui":
         return "ulong";
     case "size_t":
@@ -85,17 +89,17 @@ string ConvertArgType(string mpirType)
     switch (mpirType)
     {
     case "mpz_ptr":
-        return "[In, Out] MPZ";
+        return "[In, Out] ref mpz_t";
     case "mpz_srcptr":
-        return "[In] MPZ";
+        return "[In] ref mpz_t";
     case "mpf_ptr":
-        return "[In, Out] MPF";
+        return "[In, Out] ref mpf_t";
     case "mpf_srcptr":
-        return "[In] MPF";
+        return "[In] ref mpf_t";
     case "mpq_ptr":
-        return "[In, Out] MPQ";
+        return "[In, Out] ref mpq_t";
     case "mpq_srcptr":
-        return "[In] MPQ";
+        return "[In] ref mpq_t";
     case "__gmp_const char *":
         return "[MarshalAs(UnmanagedType.LPStr)] string";
     case "char *":
