@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProCalc.Lib.Lexer
+﻿namespace ProCalc.Lib.Syntax
 {
     public enum TokenType
     {
@@ -13,6 +7,7 @@ namespace ProCalc.Lib.Lexer
         Number,
         Identifier,
         Operator,
+        UnaryOperator,
         OpenParen,
         CloseParen,
         Comma,

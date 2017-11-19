@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ProCalc.Lib.MPIR;
-using System.Runtime.InteropServices;
 
 namespace ProCalc.Tests
 {

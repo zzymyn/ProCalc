@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
-namespace ProCalc.Lib.Lexer
+namespace ProCalc.Lib.Syntax
 {
     /// <summary>
     /// Equation lexer.
@@ -14,7 +10,7 @@ namespace ProCalc.Lib.Lexer
     /// <remarks>
     /// TODO: are there more efficient ways of doign this? does it matter?
     /// </remarks>
-    public class Lexer
+    public static class Lexer
     {
         private static readonly Regex R = new Regex(
             @"(?<num>       [0-9]([ \t0-9]*[0-9])?([ \t]*\.[ \t0-9]*[0-9])?

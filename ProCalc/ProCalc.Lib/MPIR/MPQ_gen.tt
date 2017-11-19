@@ -28,21 +28,21 @@
 
     var UOps = new []
     {
-        new { Op = "-", Func = "mpq_neg" },
+        new { Name = "Negate", Op = "-", Func = "mpq_neg" },
     };
 
     var BinOps = new []
     {
-        new { Op = "+", Func = "mpq_add" },
-        new { Op = "-", Func = "mpq_sub" },
-        new { Op = "*", Func = "mpq_mul" },
-        new { Op = "/", Func = "mpq_div" },
+        new { Name = "Add", Op = "+", Func = "mpq_add" },
+        new { Name = "Sub", Op = "-", Func = "mpq_sub" },
+        new { Name = "Mul", Op = "*", Func = "mpq_mul" },
+        new { Name = "Div", Op = "/", Func = "mpq_div" },
     };
 
     var Funcs = new []
     {
-        new { Name = "Abs", Func = "mpq_abs" },
-        new { Name = "Inv", Func = "mpq_inv" },
+        new { Name = "GetAbs", Func = "mpq_abs" },
+        new { Name = "GetInv", Func = "mpq_inv" },
     };
 
     var ComparisonOps = new []
@@ -97,6 +97,12 @@ namespace ProCalc.Lib.MPIR
         foreach (var op in UOps)
         {
 #>
+        public MPQ <#= op.Name #>()
+        {
+            MPIR.<#= op.Func #>(ref S, ref S);
+            return this;
+        }
+
         public static MPQ operator <#= op.Op #>(MPQ a)
         {
             var r = new MPQ();
@@ -113,6 +119,12 @@ namespace ProCalc.Lib.MPIR
         foreach (var op in BinOps)
         {
 #>
+        public MPQ <#= op.Name #>(MPQ b)
+        {
+            MPIR.<#= op.Func #>(ref S, ref S, ref b.S);
+            return this;
+        }
+
         public static MPQ operator <#= op.Op #>(MPQ a, MPQ b)
         {
             var r = new MPQ();

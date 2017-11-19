@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 
-namespace ProCalc.Lib.Lexer
+namespace ProCalc.Lib.Syntax
 {
     [DebuggerDisplay("{Type}: {Value}")]
     public struct Token
@@ -27,6 +22,14 @@ namespace ProCalc.Lib.Lexer
             Index = 0;
             Length = value.Length;
             m_Source = value;
+        }
+
+        public Token(TokenType newType, Token t)
+        {
+            Type = newType;
+            Index = t.Index;
+            Length = t.Length;
+            m_Source = t.m_Source;
         }
 
         internal Token(TokenType type, int index, int length, string source)

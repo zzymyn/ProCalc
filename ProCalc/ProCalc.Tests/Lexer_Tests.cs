@@ -1,9 +1,6 @@
-﻿using System;
+﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ProCalc.Lib.MPIR;
-using System.Runtime.InteropServices;
-using ProCalc.Lib.Lexer;
-using System.Linq;
+using ProCalc.Lib.Syntax;
 
 namespace ProCalc.Tests
 {

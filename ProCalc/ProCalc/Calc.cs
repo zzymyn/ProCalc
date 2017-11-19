@@ -1,13 +1,6 @@
-﻿using ProCalc.Lib.Lexer;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using System.Windows.Forms;
+using ProCalc.Lib.Syntax;
 
 namespace ProCalc.UI
 {
@@ -20,6 +13,8 @@ namespace ProCalc.UI
 
         private void Calc_Load(object sender, EventArgs e)
         {
+            var r = Parser.Evaluate("10/-1*-2");
+            ;
         }
     }
 }

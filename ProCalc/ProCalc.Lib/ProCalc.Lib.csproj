@@ -40,9 +40,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Lexer\Lexer.cs" />
-    <Compile Include="Lexer\Token.cs" />
-    <Compile Include="Lexer\TokenType.cs" />
+    <Compile Include="Syntax\Lexer.cs" />
+    <Compile Include="Syntax\Parser.cs" />
+    <Compile Include="Syntax\ParsingException.cs" />
+    <Compile Include="Syntax\Token.cs" />
+    <Compile Include="Syntax\TokenType.cs" />
     <Compile Include="MPIR\MPF.cs" />
     <Compile Include="MPIR\MPIR.cs" />
     <Compile Include="MPIR\MPIR_gen.cs">
