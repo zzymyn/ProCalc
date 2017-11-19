@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProCalc.Lib.Lexer;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,6 +16,10 @@ namespace ProCalc.UI
         public Calc()
         {
             InitializeComponent();
+        }
+
+        private void Calc_Load(object sender, EventArgs e)
+        {
         }
     }
 }

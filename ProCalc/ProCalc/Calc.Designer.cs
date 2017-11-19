@@ -30,13 +30,14 @@
         {
             this.SuspendLayout();
             // 
-            // Form1
+            // Calc
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(562, 391);
-            this.Name = "Form1";
+            this.Name = "Calc";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.Calc_Load);
             this.ResumeLayout(false);
 
         }

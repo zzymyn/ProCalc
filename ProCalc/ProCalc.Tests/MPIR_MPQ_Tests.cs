@@ -49,5 +49,14 @@ namespace ProCalc.Tests
                 Assert.AreEqual("1", a.ToString());
             }
         }
+
+
+        [TestMethod]
+        public void NomDem()
+        {
+            var a = new MPQ("22/7");
+            Assert.AreEqual(a.Numerator, 22);
+            Assert.AreEqual(a.Denominator, 7);
+        }
     }
 }

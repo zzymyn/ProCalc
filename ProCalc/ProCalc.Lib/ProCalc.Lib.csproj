@@ -40,6 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Lexer\Lexer.cs" />
+    <Compile Include="Lexer\Token.cs" />
+    <Compile Include="Lexer\TokenType.cs" />
     <Compile Include="MPIR\MPF.cs" />
     <Compile Include="MPIR\MPIR.cs" />
     <Compile Include="MPIR\MPIR_gen.cs">
@@ -62,15 +65,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\mpir\build.vc14\dll_mpir_gc\dll_mpir_gc.vcxproj">
-      <Project>{10B31DE4-3383-4BBE-95D2-4FA82F3C07BC}</Project>
-      <Name>dll_mpir_gc</Name>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <Private>False</Private>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\..\mpir\build.vc14\dll_mpir_gc\x64\Release\mpir.dll">
+    <Content Include="..\..\mpir\dll\x64\Release\mpir.dll">
       <Link>mpir.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
