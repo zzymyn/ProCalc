@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Syntax\Evaluator.cs" />
     <Compile Include="Syntax\Lexer.cs" />
     <Compile Include="Syntax\Parser.cs" />
     <Compile Include="Syntax\ParsingException.cs" />

@@ -68,11 +68,23 @@ namespace ProCalc.Lib.MPIR
 
 
         // Binary ops:
+        public MPZ Add(MPZ b)
+        {
+            MPIR.mpz_add(ref S, ref S, ref b.S);
+            return this;
+        }
+
         public static MPZ operator +(MPZ a, MPZ b)
         {
             var r = new MPZ();
             MPIR.mpz_add(ref r.S, ref a.S, ref b.S);
             return r;
+        }
+
+        public MPZ Sub(MPZ b)
+        {
+            MPIR.mpz_sub(ref S, ref S, ref b.S);
+            return this;
         }
 
         public static MPZ operator -(MPZ a, MPZ b)
@@ -82,11 +94,23 @@ namespace ProCalc.Lib.MPIR
             return r;
         }
 
+        public MPZ Mul(MPZ b)
+        {
+            MPIR.mpz_mul(ref S, ref S, ref b.S);
+            return this;
+        }
+
         public static MPZ operator *(MPZ a, MPZ b)
         {
             var r = new MPZ();
             MPIR.mpz_mul(ref r.S, ref a.S, ref b.S);
             return r;
+        }
+
+        public MPZ Div(MPZ b)
+        {
+            MPIR.mpz_tdiv_q(ref S, ref S, ref b.S);
+            return this;
         }
 
         public static MPZ operator /(MPZ a, MPZ b)
@@ -96,11 +120,23 @@ namespace ProCalc.Lib.MPIR
             return r;
         }
 
+        public MPZ Rem(MPZ b)
+        {
+            MPIR.mpz_tdiv_r(ref S, ref S, ref b.S);
+            return this;
+        }
+
         public static MPZ operator %(MPZ a, MPZ b)
         {
             var r = new MPZ();
             MPIR.mpz_tdiv_r(ref r.S, ref a.S, ref b.S);
             return r;
+        }
+
+        public MPZ And(MPZ b)
+        {
+            MPIR.mpz_and(ref S, ref S, ref b.S);
+            return this;
         }
 
         public static MPZ operator &(MPZ a, MPZ b)
@@ -110,11 +146,23 @@ namespace ProCalc.Lib.MPIR
             return r;
         }
 
+        public MPZ Or(MPZ b)
+        {
+            MPIR.mpz_ior(ref S, ref S, ref b.S);
+            return this;
+        }
+
         public static MPZ operator |(MPZ a, MPZ b)
         {
             var r = new MPZ();
             MPIR.mpz_ior(ref r.S, ref a.S, ref b.S);
             return r;
+        }
+
+        public MPZ XOr(MPZ b)
+        {
+            MPIR.mpz_xor(ref S, ref S, ref b.S);
+            return this;
         }
 
         public static MPZ operator ^(MPZ a, MPZ b)
@@ -126,7 +174,7 @@ namespace ProCalc.Lib.MPIR
 
 
         // Funcs:
-        public MPZ Abs()
+        public MPZ GetAbs()
         {
             var r = new MPZ();
             MPIR.mpz_abs(ref r.S, ref S);

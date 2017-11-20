@@ -15,16 +15,31 @@ namespace ProCalc.Lib.MPIR
         // Skipped gmp_randclear - gmp_randstate_t => void
         // Skipped gmp_urandomb_ui - gmp_randstate_t,mpir_ui => mpir_ui
         // Skipped gmp_urandomm_ui - gmp_randstate_t,mpir_ui => mpir_ui
+        // Skipped gmp_asprintf - char **,__gmp_const char *,... => int
+        // Skipped gmp_fprintf - FILE *,__gmp_const char *,... => int
+        // Skipped gmp_obstack_printf - struct obstack *,__gmp_const char *,... => int
         // Skipped gmp_obstack_vprintf - struct obstack *,__gmp_const char *,va_list => int
+        [DllImport("mpir.dll", EntryPoint = "__ggmp_printf")]
+        internal static extern int gmp_printf(string a0, __arglist);
+        [DllImport("mpir.dll", EntryPoint = "__ggmp_snprintf")]
+        internal static extern int gmp_snprintf(StringBuilder a0, ulong a1, string a2, __arglist);
+        [DllImport("mpir.dll", EntryPoint = "__ggmp_sprintf")]
+        internal static extern int gmp_sprintf(StringBuilder a0, string a1, __arglist);
         // Skipped gmp_vasprintf - char **,__gmp_const char *,va_list => int
         // Skipped gmp_vfprintf - FILE *,__gmp_const char *,va_list => int
         // Skipped gmp_vprintf - __gmp_const char *,va_list => int
         // Skipped gmp_vsnprintf - char *,size_t,__gmp_const char *,va_list => int
         // Skipped gmp_vsprintf - char *,__gmp_const char *,va_list => int
+        // Skipped gmp_fscanf - FILE *,__gmp_const char *,... => int
+        [DllImport("mpir.dll", EntryPoint = "__ggmp_scanf")]
+        internal static extern int gmp_scanf(string a0, __arglist);
+        [DllImport("mpir.dll", EntryPoint = "__ggmp_sscanf")]
+        internal static extern int gmp_sscanf(string a0, string a1, __arglist);
         // Skipped gmp_vfscanf - FILE *,__gmp_const char *,va_list => int
         // Skipped gmp_vscanf - __gmp_const char *,va_list => int
         // Skipped gmp_vsscanf - __gmp_const char *,__gmp_const char *,va_list => int
-        // Skipped _mpz_realloc - mpz_ptr,mp_size_t => void *
+        [DllImport("mpir.dll", EntryPoint = "__g_mpz_realloc")]
+        internal static extern /* void* */ IntPtr _mpz_realloc([In, Out] ref mpz_t a0, ulong a1);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_abs")]
         internal static extern void mpz_abs([In, Out] ref mpz_t a0, [In] ref mpz_t a1);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_add")]
@@ -37,7 +52,8 @@ namespace ProCalc.Lib.MPIR
         internal static extern void mpz_addmul_ui([In, Out] ref mpz_t a0, [In] ref mpz_t a1, ulong a2);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_and")]
         internal static extern void mpz_and([In, Out] ref mpz_t a0, [In] ref mpz_t a1, [In] ref mpz_t a2);
-        // Skipped mpz_array_init - mpz_ptr,mp_size_t,mp_size_t => void
+        [DllImport("mpir.dll", EntryPoint = "__gmpz_array_init")]
+        internal static extern void mpz_array_init([In, Out] ref mpz_t a0, ulong a1, ulong a2);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_bin_ui")]
         internal static extern void mpz_bin_ui([In, Out] ref mpz_t a0, [In] ref mpz_t a1, ulong a2);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_bin_uiui")]
@@ -62,6 +78,8 @@ namespace ProCalc.Lib.MPIR
         internal static extern ulong mpz_cdiv_ui([In] ref mpz_t a0, ulong a1);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_clear")]
         internal static extern void mpz_clear([In, Out] ref mpz_t a0);
+        [DllImport("mpir.dll", EntryPoint = "__gmpz_clears")]
+        internal static extern void mpz_clears([In, Out] ref mpz_t a0, __arglist);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_clrbit")]
         internal static extern void mpz_clrbit([In, Out] ref mpz_t a0, ulong a1);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_cmp")]
@@ -100,7 +118,8 @@ namespace ProCalc.Lib.MPIR
         internal static extern int mpz_divisible_2exp_p([In] ref mpz_t a0, ulong a1);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_dump")]
         internal static extern void mpz_dump([In] ref mpz_t a0);
-        // Skipped mpz_export - void *,size_t *,int,size_t,int,size_t,mpz_srcptr => void *
+        [DllImport("mpir.dll", EntryPoint = "__gmpz_export")]
+        internal static extern /* void* */ IntPtr mpz_export(/* void* */ IntPtr a0, ref ulong a1, int a2, ulong a3, int a4, ulong a5, [In] ref mpz_t a6);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_fac_ui")]
         internal static extern void mpz_fac_ui([In, Out] ref mpz_t a0, ulong a1);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_2fac_ui")]
@@ -159,16 +178,21 @@ namespace ProCalc.Lib.MPIR
         [DllImport("mpir.dll", EntryPoint = "__gmpz_get_si")]
         internal static extern long mpz_get_si([In] ref mpz_t a0);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_get_str")]
-        internal static extern /* char* */ IntPtr mpz_get_str([MarshalAs(UnmanagedType.LPStr)] StringBuilder a0, int a1, [In] ref mpz_t a2);
+        internal static extern /* char* */ IntPtr mpz_get_str(StringBuilder a0, int a1, [In] ref mpz_t a2);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_get_ui")]
         internal static extern ulong mpz_get_ui([In] ref mpz_t a0);
-        // Skipped mpz_getlimbn - mpz_srcptr,mp_size_t => mp_limb_t
-        // Skipped mpz_hamdist - mpz_srcptr,mpz_srcptr => mp_bitcnt_t
-        // Skipped mpz_import - mpz_ptr,size_t,int,size_t,int,size_t,__gmp_const void * => void
+        [DllImport("mpir.dll", EntryPoint = "__gmpz_getlimbn")]
+        internal static extern ulong mpz_getlimbn([In] ref mpz_t a0, ulong a1);
+        [DllImport("mpir.dll", EntryPoint = "__gmpz_hamdist")]
+        internal static extern ulong mpz_hamdist([In] ref mpz_t a0, [In] ref mpz_t a1);
+        [DllImport("mpir.dll", EntryPoint = "__gmpz_import")]
+        internal static extern void mpz_import([In, Out] ref mpz_t a0, ulong a1, int a2, ulong a3, int a4, ulong a5, /* const void* */ IntPtr a6);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_init")]
         internal static extern void mpz_init([In, Out] ref mpz_t a0);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_init2")]
         internal static extern void mpz_init2([In, Out] ref mpz_t a0, ulong a1);
+        [DllImport("mpir.dll", EntryPoint = "__gmpz_inits")]
+        internal static extern void mpz_inits([In, Out] ref mpz_t a0, __arglist);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_init_set")]
         internal static extern void mpz_init_set([In, Out] ref mpz_t a0, [In] ref mpz_t a1);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_init_set_d")]
@@ -176,7 +200,7 @@ namespace ProCalc.Lib.MPIR
         [DllImport("mpir.dll", EntryPoint = "__gmpz_init_set_si")]
         internal static extern void mpz_init_set_si([In, Out] ref mpz_t a0, long a1);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_init_set_str")]
-        internal static extern int mpz_init_set_str([In, Out] ref mpz_t a0, [MarshalAs(UnmanagedType.LPStr)] string a1, int a2);
+        internal static extern int mpz_init_set_str([In, Out] ref mpz_t a0, string a1, int a2);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_init_set_ui")]
         internal static extern void mpz_init_set_ui([In, Out] ref mpz_t a0, ulong a1);
         // Skipped mpz_inp_raw - mpz_ptr,FILE * => size_t
@@ -227,7 +251,8 @@ namespace ProCalc.Lib.MPIR
         internal static extern int mpz_perfect_power_p([In] ref mpz_t a0);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_perfect_square_p")]
         internal static extern int mpz_perfect_square_p([In] ref mpz_t a0);
-        // Skipped mpz_popcount - mpz_srcptr => mp_bitcnt_t
+        [DllImport("mpir.dll", EntryPoint = "__gmpz_popcount")]
+        internal static extern ulong mpz_popcount([In] ref mpz_t a0);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_pow_ui")]
         internal static extern void mpz_pow_ui([In, Out] ref mpz_t a0, [In] ref mpz_t a1, ulong a2);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_powm")]
@@ -240,7 +265,8 @@ namespace ProCalc.Lib.MPIR
         // Skipped mpz_likely_prime_p - mpz_srcptr,gmp_randstate_t,mpir_ui => int
         [DllImport("mpir.dll", EntryPoint = "__gmpz_realloc2")]
         internal static extern void mpz_realloc2([In, Out] ref mpz_t a0, ulong a1);
-        // Skipped mpz_remove - mpz_ptr,mpz_srcptr,mpz_srcptr => mp_bitcnt_t
+        [DllImport("mpir.dll", EntryPoint = "__gmpz_remove")]
+        internal static extern ulong mpz_remove([In, Out] ref mpz_t a0, [In] ref mpz_t a1, [In] ref mpz_t a2);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_root")]
         internal static extern int mpz_root([In, Out] ref mpz_t a0, [In] ref mpz_t a1, ulong a2);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_nthroot")]
@@ -248,8 +274,10 @@ namespace ProCalc.Lib.MPIR
         [DllImport("mpir.dll", EntryPoint = "__gmpz_rootrem")]
         internal static extern void mpz_rootrem([In, Out] ref mpz_t a0, [In, Out] ref mpz_t a1, [In] ref mpz_t a2, ulong a3);
         // Skipped mpz_rrandomb - mpz_ptr,gmp_randstate_t,mp_bitcnt_t => void
-        // Skipped mpz_scan0 - mpz_srcptr,mp_bitcnt_t => mp_bitcnt_t
-        // Skipped mpz_scan1 - mpz_srcptr,mp_bitcnt_t => mp_bitcnt_t
+        [DllImport("mpir.dll", EntryPoint = "__gmpz_scan0")]
+        internal static extern ulong mpz_scan0([In] ref mpz_t a0, ulong a1);
+        [DllImport("mpir.dll", EntryPoint = "__gmpz_scan1")]
+        internal static extern ulong mpz_scan1([In] ref mpz_t a0, ulong a1);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_set")]
         internal static extern void mpz_set([In, Out] ref mpz_t a0, [In] ref mpz_t a1);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_set_d")]
@@ -261,7 +289,7 @@ namespace ProCalc.Lib.MPIR
         [DllImport("mpir.dll", EntryPoint = "__gmpz_set_si")]
         internal static extern void mpz_set_si([In, Out] ref mpz_t a0, long a1);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_set_str")]
-        internal static extern int mpz_set_str([In, Out] ref mpz_t a0, [MarshalAs(UnmanagedType.LPStr)] string a1, int a2);
+        internal static extern int mpz_set_str([In, Out] ref mpz_t a0, string a1, int a2);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_set_ui")]
         internal static extern void mpz_set_ui([In, Out] ref mpz_t a0, ulong a1);
         [DllImport("mpir.dll", EntryPoint = "__gmpz_setbit")]
@@ -326,6 +354,8 @@ namespace ProCalc.Lib.MPIR
         internal static extern void mpq_canonicalize([In, Out] ref mpq_t a0);
         [DllImport("mpir.dll", EntryPoint = "__gmpq_clear")]
         internal static extern void mpq_clear([In, Out] ref mpq_t a0);
+        [DllImport("mpir.dll", EntryPoint = "__gmpq_clears")]
+        internal static extern void mpq_clears([In, Out] ref mpq_t a0, __arglist);
         [DllImport("mpir.dll", EntryPoint = "__gmpq_cmp")]
         internal static extern int mpq_cmp([In] ref mpq_t a0, [In] ref mpq_t a1);
         [DllImport("mpir.dll", EntryPoint = "__g_mpq_cmp_si")]
@@ -345,9 +375,11 @@ namespace ProCalc.Lib.MPIR
         [DllImport("mpir.dll", EntryPoint = "__gmpq_get_d")]
         internal static extern double mpq_get_d([In] ref mpq_t a0);
         [DllImport("mpir.dll", EntryPoint = "__gmpq_get_str")]
-        internal static extern /* char* */ IntPtr mpq_get_str([MarshalAs(UnmanagedType.LPStr)] StringBuilder a0, int a1, [In] ref mpq_t a2);
+        internal static extern /* char* */ IntPtr mpq_get_str(StringBuilder a0, int a1, [In] ref mpq_t a2);
         [DllImport("mpir.dll", EntryPoint = "__gmpq_init")]
         internal static extern void mpq_init([In, Out] ref mpq_t a0);
+        [DllImport("mpir.dll", EntryPoint = "__gmpq_inits")]
+        internal static extern void mpq_inits([In, Out] ref mpq_t a0, __arglist);
         // Skipped mpq_inp_str - mpq_ptr,FILE *,int => size_t
         [DllImport("mpir.dll", EntryPoint = "__gmpq_inv")]
         internal static extern void mpq_inv([In, Out] ref mpq_t a0, [In] ref mpq_t a1);
@@ -371,7 +403,7 @@ namespace ProCalc.Lib.MPIR
         [DllImport("mpir.dll", EntryPoint = "__gmpq_set_si")]
         internal static extern void mpq_set_si([In, Out] ref mpq_t a0, long a1, ulong a2);
         [DllImport("mpir.dll", EntryPoint = "__gmpq_set_str")]
-        internal static extern int mpq_set_str([In, Out] ref mpq_t a0, [MarshalAs(UnmanagedType.LPStr)] string a1, int a2);
+        internal static extern int mpq_set_str([In, Out] ref mpq_t a0, string a1, int a2);
         [DllImport("mpir.dll", EntryPoint = "__gmpq_set_ui")]
         internal static extern void mpq_set_ui([In, Out] ref mpq_t a0, ulong a1, ulong a2);
         [DllImport("mpir.dll", EntryPoint = "__gmpq_set_z")]
@@ -390,6 +422,8 @@ namespace ProCalc.Lib.MPIR
         internal static extern void mpf_ceil([In, Out] ref mpf_t a0, [In] ref mpf_t a1);
         [DllImport("mpir.dll", EntryPoint = "__gmpf_clear")]
         internal static extern void mpf_clear([In, Out] ref mpf_t a0);
+        [DllImport("mpir.dll", EntryPoint = "__gmpf_clears")]
+        internal static extern void mpf_clears([In, Out] ref mpf_t a0, __arglist);
         [DllImport("mpir.dll", EntryPoint = "__gmpf_cmp")]
         internal static extern int mpf_cmp([In] ref mpf_t a0, [In] ref mpf_t a1);
         [DllImport("mpir.dll", EntryPoint = "__gmpf_cmp_d")]
@@ -430,16 +464,20 @@ namespace ProCalc.Lib.MPIR
         internal static extern double mpf_get_d([In] ref mpf_t a0);
         // Skipped mpf_get_d_2exp - signed long *,mpf_srcptr => double
         // Skipped mpf_get_default_prec - void => mp_bitcnt_t
-        // Skipped mpf_get_prec - mpf_srcptr => mp_bitcnt_t
+        [DllImport("mpir.dll", EntryPoint = "__gmpf_get_prec")]
+        internal static extern ulong mpf_get_prec([In] ref mpf_t a0);
         [DllImport("mpir.dll", EntryPoint = "__gmpf_get_si")]
         internal static extern long mpf_get_si([In] ref mpf_t a0);
-        // Skipped mpf_get_str - char *,mp_exp_t *,int,size_t,mpf_srcptr => char *
+        [DllImport("mpir.dll", EntryPoint = "__gmpf_get_str")]
+        internal static extern /* char* */ IntPtr mpf_get_str(StringBuilder a0, ref int a1, int a2, ulong a3, [In] ref mpf_t a4);
         [DllImport("mpir.dll", EntryPoint = "__gmpf_get_ui")]
         internal static extern ulong mpf_get_ui([In] ref mpf_t a0);
         [DllImport("mpir.dll", EntryPoint = "__gmpf_init")]
         internal static extern void mpf_init([In, Out] ref mpf_t a0);
         [DllImport("mpir.dll", EntryPoint = "__gmpf_init2")]
         internal static extern void mpf_init2([In, Out] ref mpf_t a0, ulong a1);
+        [DllImport("mpir.dll", EntryPoint = "__gmpf_inits")]
+        internal static extern void mpf_inits([In, Out] ref mpf_t a0, __arglist);
         [DllImport("mpir.dll", EntryPoint = "__gmpf_init_set")]
         internal static extern void mpf_init_set([In, Out] ref mpf_t a0, [In] ref mpf_t a1);
         [DllImport("mpir.dll", EntryPoint = "__gmpf_init_set_d")]
@@ -447,7 +485,7 @@ namespace ProCalc.Lib.MPIR
         [DllImport("mpir.dll", EntryPoint = "__gmpf_init_set_si")]
         internal static extern void mpf_init_set_si([In, Out] ref mpf_t a0, long a1);
         [DllImport("mpir.dll", EntryPoint = "__gmpf_init_set_str")]
-        internal static extern int mpf_init_set_str([In, Out] ref mpf_t a0, [MarshalAs(UnmanagedType.LPStr)] string a1, int a2);
+        internal static extern int mpf_init_set_str([In, Out] ref mpf_t a0, string a1, int a2);
         [DllImport("mpir.dll", EntryPoint = "__gmpf_init_set_ui")]
         internal static extern void mpf_init_set_ui([In, Out] ref mpf_t a0, ulong a1);
         // Skipped mpf_inp_str - mpf_ptr,FILE *,int => size_t
@@ -464,7 +502,8 @@ namespace ProCalc.Lib.MPIR
         // Skipped mpf_out_str - FILE *,int,size_t,mpf_srcptr => size_t
         [DllImport("mpir.dll", EntryPoint = "__gmpf_pow_ui")]
         internal static extern void mpf_pow_ui([In, Out] ref mpf_t a0, [In] ref mpf_t a1, ulong a2);
-        // Skipped mpf_random2 - mpf_ptr,mp_size_t,mp_exp_t => void
+        [DllImport("mpir.dll", EntryPoint = "__gmpf_random2")]
+        internal static extern void mpf_random2([In, Out] ref mpf_t a0, ulong a1, int a2);
         // Skipped mpf_rrandomb - mpf_ptr,gmp_randstate_t,mp_size_t,mp_exp_t => void
         [DllImport("mpir.dll", EntryPoint = "__gmpf_reldiff")]
         internal static extern void mpf_reldiff([In, Out] ref mpf_t a0, [In] ref mpf_t a1, [In] ref mpf_t a2);
@@ -483,7 +522,7 @@ namespace ProCalc.Lib.MPIR
         [DllImport("mpir.dll", EntryPoint = "__gmpf_set_si")]
         internal static extern void mpf_set_si([In, Out] ref mpf_t a0, long a1);
         [DllImport("mpir.dll", EntryPoint = "__gmpf_set_str")]
-        internal static extern int mpf_set_str([In, Out] ref mpf_t a0, [MarshalAs(UnmanagedType.LPStr)] string a1, int a2);
+        internal static extern int mpf_set_str([In, Out] ref mpf_t a0, string a1, int a2);
         [DllImport("mpir.dll", EntryPoint = "__gmpf_set_ui")]
         internal static extern void mpf_set_ui([In, Out] ref mpf_t a0, ulong a1);
         [DllImport("mpir.dll", EntryPoint = "__gmpf_set_z")]

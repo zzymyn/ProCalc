@@ -10,7 +10,7 @@ namespace ProCalc.Lib.Syntax
 {
     public class Parser
     {
-        private Stack<MPQ> m_Vals = new Stack<MPQ>();
+        private Evaluator m_Evaluator = new Evaluator();
         private Stack<Token> m_Ops = new Stack<Token>();
 
         private Parser()
@@ -28,103 +28,129 @@ namespace ProCalc.Lib.Syntax
             e.MoveNext();
             EvaluateExpression(e);
             if (e.Current.Type != TokenType.EOF)
-                throw new ParsingException($"unexpected token: {e.Current.Type}", e.Current);
+                throw new UnexpectedTokenParsingException(e.Current, TokenType.EOF);
             HandleEof(e.Current);
-            if (m_Vals.Count != 1)
+            if (!m_Evaluator.HasResult)
                 throw new ParsingException("internal error", e.Current);
-            return m_Vals.Peek();
+            return m_Evaluator.Result;
         }
 
         private void EvaluateExpression(IEnumerator<Token> e)
         {
-            switch (e.Current.Type)
+            while (true)
             {
-                case TokenType.Number:
-                    HandleNumber(e.Current);
-                    e.MoveNext();
-                    if (e.Current.Type == TokenType.Operator)
-                    {
-                        HandleOperator(e.Current);
-                        e.MoveNext();
-                        EvaluateExpression(e);
-                    }
-                    break;
-                case TokenType.Operator:
-                    // operator at start of expression must be a unary:
+                // operators at start of expression; must be a unary:
+                while (e.Current.Type == TokenType.Operator)
+                {
                     if (IsUnary(e.Current))
                     {
                         HandleUnaryOperator(new Token(TokenType.UnaryOperator, e.Current));
                         e.MoveNext();
-                        EvaluateExpression(e);
                     }
                     else
                     {
                         throw new ParsingException($"invalid unary operator: {e.Current.Value}", e.Current);
                     }
+                }
+
+                switch (e.Current.Type)
+                {
+                    case TokenType.Number:
+                        HandleNumber(e.Current);
+                        e.MoveNext();
+                        break;
+                    case TokenType.Identifier:
+                        // can either be a function call or a variable, need to look-ahead to find out:
+                        {
+                            var ident = e.Current;
+                            e.MoveNext();
+                            if (e.Current.Type == TokenType.OpenParen)
+                            {
+                                // function call
+                                EvaluateFunctionCall(ident, e);
+                            }
+                            else
+                            {
+                                // variable
+                                HandleVariable(ident);
+                            }
+                        }
+                        break;
+                    case TokenType.OpenParen:
+                        HandleOpenParen(e.Current);
+                        e.MoveNext();
+                        EvaluateExpression(e);
+                        if (e.Current.Type == TokenType.CloseParen)
+                        {
+                            HandleCloseParen(e.Current);
+                            e.MoveNext();
+                        }
+                        else if (e.Current.Type == TokenType.EOF)
+                        {
+                            HandleCloseParen(e.Current);
+                        }
+                        else
+                        {
+                            throw new UnexpectedTokenParsingException(e.Current, TokenType.CloseParen);
+                        }
+                        break;
+                    default:
+                        throw new UnexpectedTokenParsingException(e.Current, TokenType.UnaryOperator, TokenType.Number, TokenType.Identifier, TokenType.OpenParen);
+                }
+
+                if (e.Current.Type != TokenType.Operator)
                     break;
-                case TokenType.OpenParen:
-                    HandleOpenParen(e.Current);
+
+                HandleOperator(e.Current);
+                e.MoveNext();
+            }
+        }
+
+        private void EvaluateFunctionCall(Token ident, IEnumerator<Token> e)
+        {
+            Debug.Assert(e.Current.Type == TokenType.OpenParen);
+
+            int arity = 0;
+
+            HandleOpenParen(e.Current);
+            e.MoveNext();
+            while (true)
+            {
+                ++arity;
+                EvaluateExpression(e);
+                if (e.Current.Type == TokenType.CloseParen)
+                {
+                    HandleCloseParen(e.Current);
                     e.MoveNext();
-                    EvaluateExpression(e);
-                    e.MoveNext();
-                    if (e.Current.Type != TokenType.CloseParen)
-                        throw new ParsingException("missing closing parenthesis", e.Current);
+                    break;
+                }
+                else if (e.Current.Type == TokenType.EOF)
+                {
                     HandleCloseParen(e.Current);
                     break;
-                case TokenType.EOF:
-                    break;
-                default:
-                    throw new ParsingException($"unexpected token: {e.Current.Type}", e.Current);
+                }
+                else if (e.Current.Type == TokenType.Comma)
+                {
+                    HandleComma(e.Current);
+                    e.MoveNext();
+                }
+                else
+                {
+                    throw new UnexpectedTokenParsingException(e.Current, TokenType.CloseParen, TokenType.Comma);
+                }
             }
-        }
 
-        private void EvalNumber(Token t)
-        {
-            m_Vals.Push(new MPQ(t.Value));
-        }
-
-        private void EvalOperator(Token t)
-        {
-            var b = m_Vals.Pop();
-
-            switch (t.Value)
-            {
-                case "*":
-                    m_Vals.Peek().Mul(b);
-                    break;
-                case "/":
-                    m_Vals.Peek().Div(b);
-                    break;
-                case "+":
-                    m_Vals.Peek().Add(b);
-                    break;
-                case "-":
-                    m_Vals.Peek().Sub(b);
-                    break;
-                default:
-                    throw new ParsingException("internal error", t);
-            }
-        }
-
-        private void EvalUnaryOperator(Token t)
-        {
-            switch (t.Value)
-            {
-                case "+":
-                    // nothing
-                    return;
-                case "-":
-                    m_Vals.Peek().Negate();
-                    return;
-                default:
-                    throw new ParsingException("internal error", t);
-            }
+            m_Evaluator.ApplyFunction(ident, arity);
         }
 
         private void HandleNumber(Token t)
         {
-            Debug.Assert(t.Type == TokenType.Number);
-            EvalNumber(t);
+            m_Evaluator.PushNumber(t);
+        }
+
+        private void HandleVariable(Token t)
+        {
+            m_Evaluator.PushVariable(t);
         }
 
         private void HandleOperator(Token t)
@@ -141,10 +167,10 @@ namespace ProCalc.Lib.Syntax
                     case TokenType.Operator:
                         if (GetPrecedence(m_Ops.Peek()) < precedence)
                             goto done;
-                        EvalOperator(m_Ops.Pop());
+                        m_Evaluator.ApplyOperator(m_Ops.Pop());
                         break;
                     case TokenType.UnaryOperator:
-                        EvalUnaryOperator(m_Ops.Pop());
+                        m_Evaluator.ApplyUnaryOperator(m_Ops.Pop());
                         break;
                     default:
                         throw new ParsingException("internal error", t);
@@ -167,9 +193,32 @@ namespace ProCalc.Lib.Syntax
             m_Ops.Push(t);
         }
 
+        private void HandleComma(Token t)
+        {
+            Debug.Assert(t.Type == TokenType.Comma);
+            while (m_Ops.Count > 0)
+            {
+                switch (m_Ops.Peek().Type)
+                {
+                    case TokenType.OpenParen:
+                        return;
+                    case TokenType.Operator:
+                        m_Evaluator.ApplyOperator(m_Ops.Pop());
+                        break;
+                    case TokenType.UnaryOperator:
+                        m_Evaluator.ApplyUnaryOperator(m_Ops.Pop());
+                        break;
+                    default:
+                        throw new ParsingException("internal error", t);
+                }
+            }
+
+            throw new ParsingException("no matching function call", t);
+        }
+
         private void HandleCloseParen(Token t)
         {
-            Debug.Assert(t.Type == TokenType.CloseParen);
+            Debug.Assert(t.Type == TokenType.CloseParen || t.Type == TokenType.EOF);
             while (m_Ops.Count > 0)
             {
                 switch (m_Ops.Peek().Type)
@@ -178,10 +227,10 @@ namespace ProCalc.Lib.Syntax
                         m_Ops.Pop();
                         return;
                     case TokenType.Operator:
-                        EvalOperator(m_Ops.Pop());
+                        m_Evaluator.ApplyOperator(m_Ops.Pop());
                         break;
                     case TokenType.UnaryOperator:
-                        EvalUnaryOperator(m_Ops.Pop());
+                        m_Evaluator.ApplyUnaryOperator(m_Ops.Pop());
                         break;
                     default:
                         throw new ParsingException("internal error", t);
@@ -201,10 +250,10 @@ namespace ProCalc.Lib.Syntax
                     case TokenType.OpenParen:
                         throw new ParsingException("missing closing parenthesis", t);
                     case TokenType.Operator:
-                        EvalOperator(m_Ops.Pop());
+                        m_Evaluator.ApplyOperator(m_Ops.Pop());
                         break;
                     case TokenType.UnaryOperator:
-                        EvalUnaryOperator(m_Ops.Pop());
+                        m_Evaluator.ApplyUnaryOperator(m_Ops.Pop());
                         break;
                     default:
                         throw new ParsingException("internal error", t);

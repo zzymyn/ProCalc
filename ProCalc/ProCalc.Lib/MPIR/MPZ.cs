@@ -58,6 +58,14 @@ namespace ProCalc.Lib.MPIR
             Free();
         }
 
+        public MPZ DivWithRem(MPZ b, out MPZ rem)
+        {
+            var r = new MPZ();
+            rem = new MPZ();
+            MPIR.mpz_cdiv_qr(ref r.S, ref rem.S, ref S, ref b.S);
+            return r;
+        }
+
         public int CompareTo(MPZ a)
         {
             if (ReferenceEquals(a, null))
@@ -65,6 +73,7 @@ namespace ProCalc.Lib.MPIR
             return MPIR.mpz_cmp(ref S, ref a.S);
         }
 
+        // TODO: make better
         public override int GetHashCode()
         {
             return ToString().GetHashCode();
@@ -91,7 +100,7 @@ namespace ProCalc.Lib.MPIR
         {
             var size = (int)MPIR.mpz_sizeinbase(ref S, numericBase) + 1;
             var sb = new StringBuilder(size);
-            var r = MPIR.mpz_get_str(sb, numericBase, ref S);
+            MPIR.mpz_get_str(sb, numericBase, ref S);
             return sb.ToString();
         }
 

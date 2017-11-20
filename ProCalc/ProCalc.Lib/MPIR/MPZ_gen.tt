@@ -31,19 +31,19 @@
 
     var BinOps = new []
     {
-        new { Op = "+", Func = "mpz_add" },
-        new { Op = "-", Func = "mpz_sub" },
-        new { Op = "*", Func = "mpz_mul" },
-        new { Op = "/", Func = "mpz_tdiv_q" },
-        new { Op = "%", Func = "mpz_tdiv_r" },
-        new { Op = "&", Func = "mpz_and" },
-        new { Op = "|", Func = "mpz_ior" },
-        new { Op = "^", Func = "mpz_xor" },
+        new { Name = "Add", Op = "+", Func = "mpz_add" },
+        new { Name = "Sub", Op = "-", Func = "mpz_sub" },
+        new { Name = "Mul", Op = "*", Func = "mpz_mul" },
+        new { Name = "Div", Op = "/", Func = "mpz_tdiv_q" },
+        new { Name = "Rem", Op = "%", Func = "mpz_tdiv_r" },
+        new { Name = "And", Op = "&", Func = "mpz_and" },
+        new { Name = "Or", Op = "|", Func = "mpz_ior" },
+        new { Name = "XOr", Op = "^", Func = "mpz_xor" },
     };
     
     var Funcs = new []
     {
-        new { Name = "Abs", Func = "mpz_abs" },
+        new { Name = "GetAbs", Func = "mpz_abs" },
     };
 
     var ComparisonOps = new []
@@ -112,6 +112,12 @@ namespace ProCalc.Lib.MPIR
         foreach (var op in BinOps)
         {
 #>
+        public MPZ <#= op.Name #>(MPZ b)
+        {
+            MPIR.<#= op.Func #>(ref S, ref S, ref b.S);
+            return this;
+        }
+
         public static MPZ operator <#= op.Op #>(MPZ a, MPZ b)
         {
             var r = new MPZ();

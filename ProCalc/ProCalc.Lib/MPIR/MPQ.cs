@@ -65,6 +65,7 @@ namespace ProCalc.Lib.MPIR
             return MPIR.mpq_cmp(ref S, ref a.S);
         }
 
+        // TODO: make better
         public override int GetHashCode()
         {
             return ToString().GetHashCode();
@@ -72,7 +73,7 @@ namespace ProCalc.Lib.MPIR
 
         public override bool Equals(object obj)
         {
-            return Equals(obj as MPZ);
+            return Equals(obj as MPQ);
         }
 
         public bool Equals(MPQ a)
@@ -91,7 +92,7 @@ namespace ProCalc.Lib.MPIR
         {
             var size = (int)MPIR.mpz_sizeinbase(ref S._mp_num, numericBase) + (int)MPIR.mpz_sizeinbase(ref S._mp_den, numericBase) + 2;
             var sb = new StringBuilder(size + 1);
-            var r = MPIR.mpq_get_str(sb, numericBase, ref S);
+            MPIR.mpq_get_str(sb, numericBase, ref S);
             return sb.ToString();
         }
 

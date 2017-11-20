@@ -9,7 +9,7 @@
 <#@ assembly name="EnvDTE" #>
 <#
 
-var MPZRegex = new Regex(@"__GMP_DECLSPEC\s*(?<ReturnType>[ _a-zA-Z0-9*/]+?)\s*(?<Name>\w+)\s*__GMP_PROTO\s*\(\((?<Args>[ _a-zA-Z0-9*]+)(,\s*(?<Args>[ _a-zA-Z0-9*]+))*\)\)(\s*\w+)*");
+var MPZRegex = new Regex(@"__GMP_DECLSPEC\s*(?<ReturnType>[ _a-zA-Z0-9*/]+?)\s*(?<Name>\w+)\s*__GMP_PROTO\s*\(\((?<Args>[ _a-zA-Z0-9*.]+)(,\s*(?<Args>[ _a-zA-Z0-9*.]+))*\)\)(\s*\w+)*");
 
 var dte = (EnvDTE.DTE) ((IServiceProvider)Host).GetService(typeof(EnvDTE.DTE));
 var solutionDir = Path.GetDirectoryName(dte.Solution.FullName);
@@ -45,7 +45,7 @@ foreach (var line in File.ReadLines(mpirHeader))
         continue;
     }
 
-    var argsWithNames = args.Zip(GenArgNames(), (a, b) => a + " a" + b);
+    var argsWithNames = AddArgNames(args);
 
 #>
         [DllImport("mpir.dll", EntryPoint = "__g<#=name#>")]
@@ -71,6 +71,10 @@ string ConvertReturnType(string mpirType)
         return "long";
     case "/* signed */ mpir_si":
         return "long";
+    case "mp_bitcnt_t":
+        return "ulong";
+    case "mp_limb_t":
+        return "ulong";
     case "mpir_ui":
         return "ulong";
     case "size_t":
@@ -79,6 +83,8 @@ string ConvertReturnType(string mpirType)
         return "double";
     case "char *":
         return "/* char* */ IntPtr";
+    case "void *":
+        return "/* void* */ IntPtr";
     default:
         return null;
     }
@@ -88,6 +94,8 @@ string ConvertArgType(string mpirType)
 {
     switch (mpirType)
     {
+    case "...":
+        return "__arglist";
     case "mpz_ptr":
         return "[In, Out] ref mpz_t";
     case "mpz_srcptr":
@@ -101,11 +109,23 @@ string ConvertArgType(string mpirType)
     case "mpq_srcptr":
         return "[In] ref mpq_t";
     case "__gmp_const char *":
-        return "[MarshalAs(UnmanagedType.LPStr)] string";
+        return "string";
     case "char *":
-        return "[MarshalAs(UnmanagedType.LPStr)] StringBuilder";
+        return "StringBuilder";
+    case "__gmp_const void *":
+        return "/* const void* */ IntPtr";
+    case "void *":
+        return "/* void* */ IntPtr";
     case "mp_bitcnt_t":
         return "ulong";
+    case "mp_limb_t":
+        return "ulong";
+    case "mp_size_t":
+        return "ulong";
+    case "mp_exp_t":
+        return "int";
+    case "mp_exp_t *":
+        return "ref int";
     case "int":
         return "int";
     case "double":
@@ -116,16 +136,23 @@ string ConvertArgType(string mpirType)
         return "ulong";
     case "size_t":
         return "ulong";
+    case "size_t *":
+        return "ref ulong";
     default:
         return "";
     }
 }
 
-IEnumerable<string> GenArgNames()
+IEnumerable<string> AddArgNames(IEnumerable<string> types)
 {
-    for (int i = 0; ; ++i)
+    int i = 0;
+    foreach (var t in types)
     {
-        yield return i.ToString();
+        if (t == "__arglist")
+            yield return t;
+        else
+            yield return t + " a" + i.ToString();
+        ++i;
     }
 }
 

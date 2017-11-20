@@ -50,7 +50,9 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Parser_Tests.cs" />
     <Compile Include="Lexer_Tests.cs" />
+    <Compile Include="MPIR_MPF_Tests.cs" />
     <Compile Include="MPIR_MPQ_Tests.cs" />
     <Compile Include="MPIR_MPZ_Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
