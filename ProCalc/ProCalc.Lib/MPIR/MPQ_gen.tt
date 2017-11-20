@@ -6,169 +6,63 @@
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#
-    var Inits = new []
+    var stdExtras = new [] {"MPIR.mpq_canonicalize(ref S);"};
+
+    var classDef = new ClassDef()
     {
-        new { Sig = "MPZ a", Args = "ref a.S", InitFunc = "mpq_set_z" },
-        new { Sig = "long a", Args = "a, 1ul", InitFunc = "mpq_set_si" },
-        new { Sig = "long a, ulong b", Args = "a, b", InitFunc = "mpq_set_si" },
-        new { Sig = "ulong a", Args = "a, 1ul", InitFunc = "mpq_set_ui" },
-        new { Sig = "ulong a, ulong b", Args = "a, b", InitFunc = "mpq_set_ui" },
-        new { Sig = "double a", Args = "a", InitFunc = "mpq_set_d" },
+        Name = "MPQ",
+        Inits = new []
+        {
+            new InitDef { Sig = "long a", Chain = ": this()", Func = "mpq_set_si", Args = "a, 1ul", Extras = stdExtras },
+            new InitDef { Sig = "long a, ulong b", Chain = ": this()", Func = "mpq_set_si", Args = "a, b", Extras = stdExtras },
+            new InitDef { Sig = "ulong a", Chain = ": this()", Func = "mpq_set_ui", Args = "a, 1ul", Extras = stdExtras },
+            new InitDef { Sig = "ulong a, ulong b", Chain = ": this()", Func = "mpq_set_ui", Args = "a, b", Extras = stdExtras },
+            new InitDef { Sig = "double a", Chain = ": this()", Func = "mpq_set_d", Args = "a", Extras = stdExtras },
+            new InitDef { Access = "internal", Sig = "ref MPIR.mpq_t a", Chain = ": this()", Func = "mpq_set", Args = "ref a" },
+            new InitDef { Sig = "MPQ a", Chain = ": this(ref a.S)" },
+            new InitDef { Access = "internal", Sig = "ref MPIR.mpz_t a", Chain = ": this()", Func = "mpq_set_z", Args = "ref a", Extras = stdExtras },
+            new InitDef { Sig = "MPZ a", Chain = ": this(ref a.S)" },
+        },
+        Convs = new []
+        {
+            new ConvDef { Type = "MPZ", Mode = "implicit", },
+            new ConvDef { Type = "int", Mode = "implicit", },
+            new ConvDef { Type = "uint", Mode = "implicit", },
+            new ConvDef { Type = "long", Mode = "implicit", },
+            new ConvDef { Type = "ulong", Mode = "implicit", },
+            new ConvDef { Type = "double", Mode = "explicit", },
+        },
+        Ops = new []
+        {
+            new OpDef { Op = "-", Sig = "MPQ a", Func = "mpq_neg", Args = "ref a.S" },
+            
+            new OpDef { Op = "+", Sig = "MPQ a, MPQ b", Func = "mpq_add", Args = "ref a.S, ref b.S" },
+            
+            new OpDef { Op = "-", Sig = "MPQ a, MPQ b", Func = "mpq_sub", Args = "ref a.S, ref b.S" },
+            
+            new OpDef { Op = "*", Sig = "MPQ a, MPQ b", Func = "mpq_mul", Args = "ref a.S, ref b.S" },
+            
+            new OpDef { Op = "/", Sig = "MPQ a, MPQ b", Func = "mpq_div", Args = "ref a.S, ref b.S" },
+        },
+        Gets = new []
+        {
+            new GetDef { Name = "GetAbs", Sig = "", Func = "mpq_abs", Args = "ref S" },
+            new GetDef { Name = "GetInv", Sig = "", Func = "mpq_inv", Args = "ref S" },
+        },
+        Funcs = new[]
+        {
+            new FuncDef { Name = "Add", Sig = "MPQ b", Func = "mpq_add", Args = "ref S, ref b.S" },
+            new FuncDef { Name = "Add", Access = "internal", Sig = "ref MPIR.mpq_t b", Func = "mpq_add", Args = "ref S, ref b" },
+
+            new FuncDef { Name = "Sub", Sig = "MPQ b", Func = "mpq_sub", Args = "ref S, ref b.S" },
+            new FuncDef { Name = "Sub", Access = "internal", Sig = "ref MPIR.mpq_t b", Func = "mpq_sub", Args = "ref S, ref b" },
+            
+            new FuncDef { Name = "Mul", Sig = "MPQ b", Func = "mpq_mul", Args = "ref S, ref b.S" },
+            new FuncDef { Name = "Mul", Access = "internal", Sig = "ref MPIR.mpq_t b", Func = "mpq_mul", Args = "ref S, ref b" },
+            
+            new FuncDef { Name = "Div", Sig = "MPQ b", Func = "mpq_div", Args = "ref S, ref b.S" },
+            new FuncDef { Name = "Div", Access = "internal", Sig = "ref MPIR.mpq_t b", Func = "mpq_div", Args = "ref S, ref b" },
+        },
     };
-
-    var Convs = new []
-    {
-        new { Type = "MPZ", Mode = "implicit", },
-        new { Type = "int", Mode = "implicit", },
-        new { Type = "uint", Mode = "implicit", },
-        new { Type = "long", Mode = "implicit", },
-        new { Type = "ulong", Mode = "implicit", },
-        new { Type = "double", Mode = "explicit", },
-    };
-
-    var UOps = new []
-    {
-        new { Name = "Negate", Op = "-", Func = "mpq_neg" },
-    };
-
-    var BinOps = new []
-    {
-        new { Name = "Add", Op = "+", Func = "mpq_add" },
-        new { Name = "Sub", Op = "-", Func = "mpq_sub" },
-        new { Name = "Mul", Op = "*", Func = "mpq_mul" },
-        new { Name = "Div", Op = "/", Func = "mpq_div" },
-    };
-
-    var Funcs = new []
-    {
-        new { Name = "GetAbs", Func = "mpq_abs" },
-        new { Name = "GetInv", Func = "mpq_inv" },
-    };
-
-    var ComparisonOps = new []
-    {
-        new { Op = "<", },
-        new { Op = ">", },
-        new { Op = "<=", },
-        new { Op = ">=", },
-        new { Op = "==", },
-        new { Op = "!=", },
-    };
-
 #>
-using System;
-
-namespace ProCalc.Lib.MPIR
-{
-    public partial class MPQ
-    {
-        // Constructors:
-<#
-        foreach (var op in Inits)
-        {
-#>
-        public MPQ(<#= op.Sig #>)
-            : this()
-        {
-            MPIR.<#= op.InitFunc #>(ref S, <#= op.Args #>);
-            MPIR.mpq_canonicalize(ref S);
-        }
-
-<#
-        }
-#>
-
-        // Conversions:
-<#
-        foreach (var op in Convs)
-        {
-#>
-        public static <#= op.Mode #> operator MPQ(<#= op.Type #> a)
-        {
-            return new MPQ(a);
-        }
-
-<#
-        }
-#>
-
-        // Unary ops:
-<#
-        foreach (var op in UOps)
-        {
-#>
-        public MPQ <#= op.Name #>()
-        {
-            MPIR.<#= op.Func #>(ref S, ref S);
-            return this;
-        }
-
-        public static MPQ operator <#= op.Op #>(MPQ a)
-        {
-            var r = new MPQ();
-            MPIR.<#= op.Func #>(ref r.S, ref a.S);
-            return r;
-        }
-
-<#
-        }
-#>
-
-        // Binary ops:
-<#
-        foreach (var op in BinOps)
-        {
-#>
-        public MPQ <#= op.Name #>(MPQ b)
-        {
-            return <#= op.Name #>(ref b.S);
-        }
-
-        internal MPQ <#= op.Name #>(ref MPIR.mpq_t b)
-        {
-            MPIR.<#= op.Func #>(ref S, ref S, ref b);
-            return this;
-        }
-
-        public static MPQ operator <#= op.Op #>(MPQ a, MPQ b)
-        {
-            var r = new MPQ();
-            MPIR.<#= op.Func #>(ref r.S, ref a.S, ref b.S);
-            return r;
-        }
-
-<#
-        }
-#>
-
-        // Funcs:
-<#
-        foreach (var op in Funcs)
-        {
-#>
-        public MPQ <#= op.Name #>()
-        {
-            var r = new MPQ();
-            MPIR.<#= op.Func #>(ref r.S, ref S);
-            return r;
-        }
-
-<#
-        }
-#>
-
-        // Comparison ops:
-<#
-        foreach (var op in ComparisonOps)
-        {
-#>
-        public static bool operator <#= op.Op #>(MPQ a, MPQ b)
-        {
-            return a.CompareTo(b) <#= op.Op #> 0;
-        }
-
-<#
-        }
-#>
-    }
-}
+<#@ include file="std_gen.tt" #>

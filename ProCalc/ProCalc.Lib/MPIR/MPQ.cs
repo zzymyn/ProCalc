@@ -27,17 +27,6 @@ namespace ProCalc.Lib.MPIR
             MPIR.mpq_init(ref S);
         }
 
-        private MPQ(ref MPIR.mpq_t a)
-            : this()
-        {
-            MPIR.mpq_set(ref S, ref a);
-        }
-
-        public MPQ(MPQ a)
-            : this(ref a.S)
-        {
-        }
-
         public MPQ(string a)
             : this(a, 10)
         {

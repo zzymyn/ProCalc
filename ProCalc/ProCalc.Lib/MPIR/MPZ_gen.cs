@@ -5,50 +5,45 @@ namespace ProCalc.Lib.MPIR
     public partial class MPZ
     {
         // Constructors:
-        public MPZ(long a)
+        public MPZ(long a) 
         {
             MPIR.mpz_init_set_si(ref S, a);
         }
 
-        public MPZ(ulong a)
+        public MPZ(ulong a) 
         {
             MPIR.mpz_init_set_ui(ref S, a);
         }
 
-        public MPZ(double a)
+        public MPZ(double a) 
         {
             MPIR.mpz_init_set_d(ref S, a);
         }
 
-        internal MPZ(ref MPIR.mpz_t a)
+        internal MPZ(ref MPIR.mpz_t a) 
         {
             MPIR.mpz_init_set(ref S, ref a);
         }
 
-        public MPZ(MPZ a)
-            : this(ref a.S)
+        public MPZ(MPZ a) : this(ref a.S)
         {
         }
 
-        internal MPZ(ref MPIR.mpq_t a)
-            : this()
+        internal MPZ(ref MPIR.mpq_t a) : this()
         {
             MPIR.mpz_set_q(ref S, ref a);
         }
 
-        public MPZ(MPQ a)
-            : this(ref a.S)
+        public MPZ(MPQ a) : this(ref a.S)
         {
         }
 
-        internal MPZ(ref MPIR.mpf_t a)
-            : this()
+        internal MPZ(ref MPIR.mpf_t a) : this()
         {
             MPIR.mpz_set_f(ref S, ref a);
         }
 
-        public MPZ(MPF a)
-            : this(ref a.S)
+        public MPZ(MPF a) : this(ref a.S)
         {
         }
 

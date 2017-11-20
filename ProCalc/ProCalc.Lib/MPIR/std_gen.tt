@@ -6,32 +6,24 @@ namespace ProCalc.Lib.MPIR
     {
         // Constructors:
 <#
-foreach (var op in classDef.Inits)
-{
+        foreach (var op in classDef.Inits)
+        {
 #>
-        <#= op.Access #> <#= classDef.Name #>(<#= op.Sig #>)
-<#
-    if (op.Chain != null)
-    {
-#>
-            <#= op.Chain #>
-<#
-    }
-#>
+        <#= op.Access #> <#= classDef.Name #>(<#= op.Sig #>) <#= op.Chain ?? "" #>
         {
 <#
-    if (op.Func != null)
-    {
+            if (op.Func != null)
+            {
 #>
             MPIR.<#= op.Func #>(ref S, <#= op.Args #>);
 <#
-    }
-    if (op.Extra != null)
-    {
+            }
+            foreach (var e in op.Extras)
+            {
 #>
-            <#= op.Extra #>
+            <#= e #>
 <#
-    }
+            }
 #>
         }
 
@@ -109,3 +101,59 @@ foreach (var op in classDef.Inits)
 #>
     }
 }
+<#+
+
+class ClassDef
+{
+    public string Name;
+    public InitDef[] Inits;
+    public ConvDef[] Convs;
+    public OpDef[] Ops;
+    public GetDef[] Gets;
+    public FuncDef[] Funcs;
+}
+
+class InitDef
+{
+    public string Access = "public";
+    public string Sig;
+    public string Args;
+    public string Chain;
+    public string Func;
+    public string[] Extras = new string[0];
+}
+
+class ConvDef
+{
+    public string Type;
+    public string Mode;
+}
+
+class OpDef
+{
+    public string Op;
+    public string Access = "public";
+    public string Sig;
+    public string Args;
+    public string Func;
+}
+
+class GetDef
+{
+    public string Name;
+    public string Access = "public";
+    public string Sig;
+    public string Args;
+    public string Func;
+}
+
+class FuncDef
+{
+    public string Name;
+    public string Access = "public";
+    public string Sig;
+    public string Args;
+    public string Func;
+}
+
+#>

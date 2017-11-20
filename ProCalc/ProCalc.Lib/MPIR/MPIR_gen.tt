@@ -9,7 +9,7 @@
 <#@ assembly name="EnvDTE" #>
 <#
 
-var MPZRegex = new Regex(@"__GMP_DECLSPEC\s*(?<ReturnType>[ _a-zA-Z0-9*/]+?)\s*(?<Name>\w+)\s*__GMP_PROTO\s*\(\((?<Args>[ _a-zA-Z0-9*.]+)(,\s*(?<Args>[ _a-zA-Z0-9*.]+))*\)\)(\s*\w+)*");
+var MPIRRegex = new Regex(@"__GMP_DECLSPEC\s*(?<ReturnType>[ _a-zA-Z0-9*/]+?)\s*(?<Name>\w+)\s*__GMP_PROTO\s*\(\((?<Args>[ _a-zA-Z0-9*.]+)(,\s*(?<Args>[ _a-zA-Z0-9*.]+))*\)\)(\s*\w+)*");
 
 var dte = (EnvDTE.DTE) ((IServiceProvider)Host).GetService(typeof(EnvDTE.DTE));
 var solutionDir = Path.GetDirectoryName(dte.Solution.FullName);
@@ -28,7 +28,7 @@ namespace ProCalc.Lib.MPIR
 
 foreach (var line in File.ReadLines(mpirHeader))
 {
-    var m = MPZRegex.Match(line);
+    var m = MPIRRegex.Match(line);
     if (!m.Success)
         continue;
 
