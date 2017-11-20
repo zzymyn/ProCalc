@@ -20,6 +20,37 @@ namespace ProCalc.Lib.MPIR
             MPIR.mpz_init_set_d(ref S, a);
         }
 
+        internal MPZ(ref MPIR.mpz_t a)
+        {
+            MPIR.mpz_init_set(ref S, ref a);
+        }
+
+        public MPZ(MPZ a)
+            : this(ref a.S)
+        {
+        }
+
+        internal MPZ(ref MPIR.mpq_t a)
+            : this()
+        {
+            MPIR.mpz_set_q(ref S, ref a);
+        }
+
+        public MPZ(MPQ a)
+            : this(ref a.S)
+        {
+        }
+
+        internal MPZ(ref MPIR.mpf_t a)
+            : this()
+        {
+            MPIR.mpz_set_f(ref S, ref a);
+        }
+
+        public MPZ(MPF a)
+            : this(ref a.S)
+        {
+        }
 
         // Conversions:
         public static explicit operator MPZ(MPF a)
@@ -57,21 +88,12 @@ namespace ProCalc.Lib.MPIR
             return new MPZ(a);
         }
 
-
-        // Unary ops:
+        // Operators:
         public static MPZ operator -(MPZ a)
         {
             var r = new MPZ();
             MPIR.mpz_neg(ref r.S, ref a.S);
             return r;
-        }
-
-
-        // Binary ops:
-        public MPZ Add(MPZ b)
-        {
-            MPIR.mpz_add(ref S, ref S, ref b.S);
-            return this;
         }
 
         public static MPZ operator +(MPZ a, MPZ b)
@@ -81,10 +103,11 @@ namespace ProCalc.Lib.MPIR
             return r;
         }
 
-        public MPZ Sub(MPZ b)
+        public static MPZ operator +(MPZ a, ulong b)
         {
-            MPIR.mpz_sub(ref S, ref S, ref b.S);
-            return this;
+            var r = new MPZ();
+            MPIR.mpz_add_ui(ref r.S, ref a.S, b);
+            return r;
         }
 
         public static MPZ operator -(MPZ a, MPZ b)
@@ -94,10 +117,11 @@ namespace ProCalc.Lib.MPIR
             return r;
         }
 
-        public MPZ Mul(MPZ b)
+        public static MPZ operator -(MPZ a, ulong b)
         {
-            MPIR.mpz_mul(ref S, ref S, ref b.S);
-            return this;
+            var r = new MPZ();
+            MPIR.mpz_sub_ui(ref r.S, ref a.S, b);
+            return r;
         }
 
         public static MPZ operator *(MPZ a, MPZ b)
@@ -107,10 +131,18 @@ namespace ProCalc.Lib.MPIR
             return r;
         }
 
-        public MPZ Div(MPZ b)
+        public static MPZ operator *(MPZ a, long b)
         {
-            MPIR.mpz_tdiv_q(ref S, ref S, ref b.S);
-            return this;
+            var r = new MPZ();
+            MPIR.mpz_mul_si(ref r.S, ref a.S, b);
+            return r;
+        }
+
+        public static MPZ operator *(MPZ a, ulong b)
+        {
+            var r = new MPZ();
+            MPIR.mpz_mul_ui(ref r.S, ref a.S, b);
+            return r;
         }
 
         public static MPZ operator /(MPZ a, MPZ b)
@@ -120,10 +152,11 @@ namespace ProCalc.Lib.MPIR
             return r;
         }
 
-        public MPZ Rem(MPZ b)
+        public static MPZ operator /(MPZ a, ulong b)
         {
-            MPIR.mpz_tdiv_r(ref S, ref S, ref b.S);
-            return this;
+            var r = new MPZ();
+            MPIR.mpz_tdiv_q_ui(ref r.S, ref a.S, b);
+            return r;
         }
 
         public static MPZ operator %(MPZ a, MPZ b)
@@ -133,10 +166,11 @@ namespace ProCalc.Lib.MPIR
             return r;
         }
 
-        public MPZ And(MPZ b)
+        public static MPZ operator %(MPZ a, ulong b)
         {
-            MPIR.mpz_and(ref S, ref S, ref b.S);
-            return this;
+            var r = new MPZ();
+            MPIR.mpz_tdiv_r_ui(ref r.S, ref a.S, b);
+            return r;
         }
 
         public static MPZ operator &(MPZ a, MPZ b)
@@ -146,23 +180,11 @@ namespace ProCalc.Lib.MPIR
             return r;
         }
 
-        public MPZ Or(MPZ b)
-        {
-            MPIR.mpz_ior(ref S, ref S, ref b.S);
-            return this;
-        }
-
         public static MPZ operator |(MPZ a, MPZ b)
         {
             var r = new MPZ();
             MPIR.mpz_ior(ref r.S, ref a.S, ref b.S);
             return r;
-        }
-
-        public MPZ XOr(MPZ b)
-        {
-            MPIR.mpz_xor(ref S, ref S, ref b.S);
-            return this;
         }
 
         public static MPZ operator ^(MPZ a, MPZ b)
@@ -172,7 +194,6 @@ namespace ProCalc.Lib.MPIR
             return r;
         }
 
-
         // Funcs:
         public MPZ GetAbs()
         {
@@ -181,6 +202,101 @@ namespace ProCalc.Lib.MPIR
             return r;
         }
 
+        public MPZ Add(MPZ b)
+        {
+            MPIR.mpz_add(ref S, ref S, ref b.S);
+            return this;
+        }
+
+        internal MPZ Add(ref MPIR.mpz_t b)
+        {
+            MPIR.mpz_add(ref S, ref S, ref b);
+            return this;
+        }
+
+        public MPZ Add(ulong b)
+        {
+            MPIR.mpz_add_ui(ref S, ref S, b);
+            return this;
+        }
+
+        public MPZ Sub(MPZ b)
+        {
+            MPIR.mpz_sub(ref S, ref S, ref b.S);
+            return this;
+        }
+
+        internal MPZ Sub(ref MPIR.mpz_t b)
+        {
+            MPIR.mpz_sub(ref S, ref S, ref b);
+            return this;
+        }
+
+        public MPZ Sub(ulong b)
+        {
+            MPIR.mpz_sub_ui(ref S, ref S, b);
+            return this;
+        }
+
+        public MPZ Mul(MPZ b)
+        {
+            MPIR.mpz_mul(ref S, ref S, ref b.S);
+            return this;
+        }
+
+        internal MPZ Mul(ref MPIR.mpz_t b)
+        {
+            MPIR.mpz_mul(ref S, ref S, ref b);
+            return this;
+        }
+
+        public MPZ Mul(long b)
+        {
+            MPIR.mpz_mul_si(ref S, ref S, b);
+            return this;
+        }
+
+        public MPZ Mul(ulong b)
+        {
+            MPIR.mpz_mul_ui(ref S, ref S, b);
+            return this;
+        }
+
+        public MPZ Div(MPZ b)
+        {
+            MPIR.mpz_tdiv_q(ref S, ref S, ref b.S);
+            return this;
+        }
+
+        internal MPZ Div(ref MPIR.mpz_t b)
+        {
+            MPIR.mpz_tdiv_q(ref S, ref S, ref b);
+            return this;
+        }
+
+        internal MPZ Div(ulong b)
+        {
+            MPIR.mpz_tdiv_q_ui(ref S, ref S, b);
+            return this;
+        }
+
+        public MPZ Rem(MPZ b)
+        {
+            MPIR.mpz_tdiv_r(ref S, ref S, ref b.S);
+            return this;
+        }
+
+        internal MPZ Rem(ref MPIR.mpz_t b)
+        {
+            MPIR.mpz_tdiv_r(ref S, ref S, ref b);
+            return this;
+        }
+
+        internal MPZ Rem(ulong b)
+        {
+            MPIR.mpz_tdiv_r_ui(ref S, ref S, b);
+            return this;
+        }
 
         // Comparison ops:
         public static bool operator <(MPZ a, MPZ b)

@@ -19,28 +19,6 @@ namespace ProCalc.Lib.MPIR
             MPIR.mpz_init(ref S);
         }
 
-        internal MPZ(ref MPIR.mpz_t a)
-        {
-            MPIR.mpz_init_set(ref S, ref a);
-        }
-
-        public MPZ(MPZ a)
-            : this(ref a.S)
-        {
-        }
-
-        public MPZ(MPQ a)
-            : this()
-        {
-            MPIR.mpz_set_q(ref S, ref a.S);
-        }
-
-        public MPZ(MPF a)
-            : this()
-        {
-            MPIR.mpz_set_f(ref S, ref a.S);
-        }
-
         public MPZ(string a)
             : this(a, 10)
         {
@@ -56,6 +34,13 @@ namespace ProCalc.Lib.MPIR
         ~MPZ()
         {
             Free();
+        }
+
+        public static MPZ Pow(ulong a, ulong b)
+        {
+            var r = new MPZ();
+            MPIR.mpz_ui_pow_ui(ref r.S, a, b);
+            return r;
         }
 
         public MPZ DivWithRem(MPZ b, out MPZ rem)
@@ -98,10 +83,15 @@ namespace ProCalc.Lib.MPIR
 
         public string ToString(int numericBase)
         {
+            return ToStringBuilder(numericBase).ToString();
+        }
+
+        public StringBuilder ToStringBuilder(int numericBase)
+        {
             var size = (int)MPIR.mpz_sizeinbase(ref S, numericBase) + 1;
             var sb = new StringBuilder(size);
             MPIR.mpz_get_str(sb, numericBase, ref S);
-            return sb.ToString();
+            return sb;
         }
 
         public double ToDouble()

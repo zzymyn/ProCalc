@@ -30,14 +30,7 @@ namespace ProCalc.Lib.Syntax
 
         public void PushNumber(Token t)
         {
-            try
-            {
-                m_Vals.Push(new MPQ(t.Value));
-            }
-            catch (FormatException e)
-            {
-                throw new ParsingException("internal error", t);
-            }
+            m_Vals.Push(ParseNumber(t));
         }
 
         // TODO: use a State class/interface for looking up variables/constants
@@ -97,6 +90,18 @@ namespace ProCalc.Lib.Syntax
                     return;
                 default:
                     throw new ParsingException("internal error", t);
+            }
+        }
+
+        private MPQ ParseNumber(Token t)
+        {
+            try
+            {
+                return new MPQ(t.Value);
+            }
+            catch (FormatException)
+            {
+                throw new ParsingException("internal error", t);
             }
         }
 

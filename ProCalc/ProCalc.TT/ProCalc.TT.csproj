@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D03513BF-EC51-4B5A-B338-FA9C6CF9A26B}</ProjectGuid>
+    <ProjectGuid>{93D165C4-FE35-41B1-8314-13707DBFFE74}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ProCalc.Lib</RootNamespace>
-    <AssemblyName>ProCalc.Lib</AssemblyName>
+    <RootNamespace>ProCalc.TT</RootNamespace>
+    <AssemblyName>ProCalc.TT</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,6 +30,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.TextTemplating.14.0, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -40,54 +41,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Syntax\Evaluator.cs" />
-    <Compile Include="Syntax\Lexer.cs" />
-    <Compile Include="Syntax\Parser.cs" />
-    <Compile Include="Syntax\ParsingException.cs" />
-    <Compile Include="Syntax\Token.cs" />
-    <Compile Include="Syntax\TokenType.cs" />
-    <Compile Include="MPIR\MPF.cs" />
-    <Compile Include="MPIR\MPIR.cs" />
-    <Compile Include="MPIR\MPIR_gen.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MPIR_gen.tt</DependentUpon>
-    </Compile>
-    <Compile Include="MPIR\MPQ.cs" />
-    <Compile Include="MPIR\MPZ.cs" />
-    <Compile Include="MPIR\MPQ_gen.cs">
-      <DependentUpon>MPQ_gen.tt</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="MPIR\MPZ_gen.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MPZ_gen.tt</DependentUpon>
-    </Compile>
+    <Compile Include="FuncDef.cs" />
+    <Compile Include="GetDef.cs" />
+    <Compile Include="ClassDef.cs" />
+    <Compile Include="InitDef.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\..\mpir\dll\x64\Release\mpir.dll">
-      <Link>mpir.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="MPIR\MPIR_gen.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>MPIR_gen.cs</LastGenOutput>
-    </Content>
-    <Content Include="MPIR\MPQ_gen.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>MPQ_gen.cs</LastGenOutput>
-    </Content>
-    <Content Include="MPIR\MPZ_gen.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>MPZ_gen.cs</LastGenOutput>
-    </Content>
-    <Content Include="MPIR\std_gen.tt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+    <Compile Include="OpDef.cs" />
+    <Compile Include="ConvDef.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

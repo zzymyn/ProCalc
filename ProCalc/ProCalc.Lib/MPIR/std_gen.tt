@@ -1,0 +1,111 @@
+﻿using System;
+
+namespace ProCalc.Lib.MPIR
+{
+    public partial class <#= classDef.Name #>
+    {
+        // Constructors:
+<#
+foreach (var op in classDef.Inits)
+{
+#>
+        <#= op.Access #> <#= classDef.Name #>(<#= op.Sig #>)
+<#
+    if (op.Chain != null)
+    {
+#>
+            <#= op.Chain #>
+<#
+    }
+#>
+        {
+<#
+    if (op.Func != null)
+    {
+#>
+            MPIR.<#= op.Func #>(ref S, <#= op.Args #>);
+<#
+    }
+    if (op.Extra != null)
+    {
+#>
+            <#= op.Extra #>
+<#
+    }
+#>
+        }
+
+<#
+        }
+#>
+        // Conversions:
+<#
+        foreach (var op in classDef.Convs)
+        {
+#>
+        public static <#= op.Mode #> operator <#= classDef.Name #>(<#= op.Type #> a)
+        {
+            return new <#= classDef.Name #>(a);
+        }
+
+<#
+        }
+#>
+        // Operators:
+<#
+        foreach (var op in classDef.Ops)
+        {
+#>
+        <#= op.Access #> static <#= classDef.Name #> operator <#= op.Op #>(<#= op.Sig #>)
+        {
+            var r = new <#= classDef.Name #>();
+            MPIR.<#= op.Func #>(ref r.S, <#= op.Args #>);
+            return r;
+        }
+
+<#
+        }
+#>
+        // Funcs:
+<#
+        foreach (var op in classDef.Gets)
+        {
+#>
+        <#= op.Access #> <#= classDef.Name #> <#= op.Name #>(<#= op.Sig #>)
+        {
+            var r = new <#= classDef.Name #>();
+            MPIR.<#= op.Func #>(ref r.S, <#= op.Args #>);
+            return r;
+        }
+
+<#
+        }
+#>
+<#
+        foreach (var op in classDef.Funcs)
+        {
+#>
+        <#= op.Access #> <#= classDef.Name #> <#= op.Name #>(<#= op.Sig #>)
+        {
+            MPIR.<#= op.Func #>(ref S, <#= op.Args #>);
+            return this;
+        }
+
+<#
+        }
+#>
+        // Comparison ops:
+<#
+        foreach (var op in new [] {"<", ">", "<=", ">=", "==", "!=" })
+        {
+#>
+        public static bool operator <#= op #>(<#= classDef.Name #> a, <#= classDef.Name #> b)
+        {
+            return a.CompareTo(b) <#= op #> 0;
+        }
+
+<#
+        }
+#>
+    }
+}

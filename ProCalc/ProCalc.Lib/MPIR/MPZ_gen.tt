@@ -1,162 +1,91 @@
 ﻿<#@ template debug="false" hostspecific="false" language="C#" #>
 <#@ output extension=".cs" #>
 <#@ assembly name="System.Core" #>
+<#@ Assembly Name="$(SolutionDir)ProCalc.TT\bin\$(ConfigurationName)\ProCalc.TT.dll" #>
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="ProCalc.TT" #>
 <#
-    var Inits = new []
+    var classDef = new ClassDef()
     {
-        new { Type = "long", InitFunc = "mpz_init_set_si" },
-        new { Type = "ulong", InitFunc = "mpz_init_set_ui" },
-        new { Type = "double", InitFunc = "mpz_init_set_d" },
+        Name = "MPZ",
+        Inits = new []
+        {
+            new InitDef { Access = "public", Sig = "long a", Func = "mpz_init_set_si", Args = "a" },
+            new InitDef { Access = "public", Sig = "ulong a", Func = "mpz_init_set_ui", Args = "a" },
+            new InitDef { Access = "public", Sig = "double a", Func = "mpz_init_set_d", Args = "a" },
+            new InitDef { Access = "internal", Sig = "ref MPIR.mpz_t a", Func = "mpz_init_set", Args = "ref a" },
+            new InitDef { Access = "public", Sig = "MPZ a", Chain = ": this(ref a.S)" },
+            new InitDef { Access = "internal", Sig = "ref MPIR.mpq_t a", Chain = ": this()", Func = "mpz_set_q", Args = "ref a" },
+            new InitDef { Access = "public", Sig = "MPQ a", Chain = ": this(ref a.S)" },
+            new InitDef { Access = "internal", Sig = "ref MPIR.mpf_t a", Chain = ": this()", Func = "mpz_set_f", Args = "ref a" },
+            new InitDef { Access = "public", Sig = "MPF a", Chain = ": this(ref a.S)" },
+        },
+        Convs = new []
+        {
+            new ConvDef { Type = "MPF", Mode = "explicit", },
+            new ConvDef { Type = "MPQ", Mode = "explicit", },
+            new ConvDef { Type = "int", Mode = "implicit", },
+            new ConvDef { Type = "uint", Mode = "implicit", },
+            new ConvDef { Type = "long", Mode = "implicit", },
+            new ConvDef { Type = "ulong", Mode = "implicit", },
+            new ConvDef { Type = "double", Mode = "explicit", },
+        },
+        Ops = new []
+        {
+            new OpDef { Op = "-", Access = "public", Sig = "MPZ a", Func = "mpz_neg", Args = "ref a.S" },
+            
+            new OpDef { Op = "+", Access = "public", Sig = "MPZ a, MPZ b", Func = "mpz_add", Args = "ref a.S, ref b.S" },
+            new OpDef { Op = "+", Access = "public", Sig = "MPZ a, ulong b", Func = "mpz_add_ui", Args = "ref a.S, b" },
+            
+            new OpDef { Op = "-", Access = "public", Sig = "MPZ a, MPZ b", Func = "mpz_sub", Args = "ref a.S, ref b.S" },
+            new OpDef { Op = "-", Access = "public", Sig = "MPZ a, ulong b", Func = "mpz_sub_ui", Args = "ref a.S, b" },
+            
+            new OpDef { Op = "*", Access = "public", Sig = "MPZ a, MPZ b", Func = "mpz_mul", Args = "ref a.S, ref b.S" },
+            new OpDef { Op = "*", Access = "public", Sig = "MPZ a, long b", Func = "mpz_mul_si", Args = "ref a.S, b" },
+            new OpDef { Op = "*", Access = "public", Sig = "MPZ a, ulong b", Func = "mpz_mul_ui", Args = "ref a.S, b" },
+            
+            new OpDef { Op = "/", Access = "public", Sig = "MPZ a, MPZ b", Func = "mpz_tdiv_q", Args = "ref a.S, ref b.S" },
+            new OpDef { Op = "/", Access = "public", Sig = "MPZ a, ulong b", Func = "mpz_tdiv_q_ui", Args = "ref a.S, b" },
+            
+            new OpDef { Op = "%", Access = "public", Sig = "MPZ a, MPZ b", Func = "mpz_tdiv_r", Args = "ref a.S, ref b.S" },
+            new OpDef { Op = "%", Access = "public", Sig = "MPZ a, ulong b", Func = "mpz_tdiv_r_ui", Args = "ref a.S, b" },
+            
+            new OpDef { Op = "&", Access = "public", Sig = "MPZ a, MPZ b", Func = "mpz_and", Args = "ref a.S, ref b.S" },
+            
+            new OpDef { Op = "|", Access = "public", Sig = "MPZ a, MPZ b", Func = "mpz_ior", Args = "ref a.S, ref b.S" },
+            
+            new OpDef { Op = "^", Access = "public", Sig = "MPZ a, MPZ b", Func = "mpz_xor", Args = "ref a.S, ref b.S" },
+        },
+        Gets = new []
+        {
+            new GetDef { Name = "GetAbs", Access = "public", Sig = "", Func = "mpz_abs", Args = "ref S" },
+        },
+        Funcs = new[]
+        {
+            new FuncDef { Name = "Add", Access = "public", Sig = "MPZ b", Func = "mpz_add", Args = "ref S, ref b.S" },
+            new FuncDef { Name = "Add", Access = "internal", Sig = "ref MPIR.mpz_t b", Func = "mpz_add", Args = "ref S, ref b" },
+            new FuncDef { Name = "Add", Access = "public", Sig = "ulong b", Func = "mpz_add_ui", Args = "ref S, b" },
+
+            new FuncDef { Name = "Sub", Access = "public", Sig = "MPZ b", Func = "mpz_sub", Args = "ref S, ref b.S" },
+            new FuncDef { Name = "Sub", Access = "internal", Sig = "ref MPIR.mpz_t b", Func = "mpz_sub", Args = "ref S, ref b" },
+            new FuncDef { Name = "Sub", Access = "public", Sig = "ulong b", Func = "mpz_sub_ui", Args = "ref S, b" },
+            
+            new FuncDef { Name = "Mul", Access = "public", Sig = "MPZ b", Func = "mpz_mul", Args = "ref S, ref b.S" },
+            new FuncDef { Name = "Mul", Access = "internal", Sig = "ref MPIR.mpz_t b", Func = "mpz_mul", Args = "ref S, ref b" },
+            new FuncDef { Name = "Mul", Access = "public", Sig = "long b", Func = "mpz_mul_si", Args = "ref S, b" },
+            new FuncDef { Name = "Mul", Access = "public", Sig = "ulong b", Func = "mpz_mul_ui", Args = "ref S, b" },
+            
+            new FuncDef { Name = "Div", Access = "public", Sig = "MPZ b", Func = "mpz_tdiv_q", Args = "ref S, ref b.S" },
+            new FuncDef { Name = "Div", Access = "internal", Sig = "ref MPIR.mpz_t b", Func = "mpz_tdiv_q", Args = "ref S, ref b" },
+            new FuncDef { Name = "Div", Access = "internal", Sig = "ulong b", Func = "mpz_tdiv_q_ui", Args = "ref S, b" },
+            
+            new FuncDef { Name = "Rem", Access = "public", Sig = "MPZ b", Func = "mpz_tdiv_r", Args = "ref S, ref b.S" },
+            new FuncDef { Name = "Rem", Access = "internal", Sig = "ref MPIR.mpz_t b", Func = "mpz_tdiv_r", Args = "ref S, ref b" },
+            new FuncDef { Name = "Rem", Access = "internal", Sig = "ulong b", Func = "mpz_tdiv_r_ui", Args = "ref S, b" },
+        },
     };
-
-    var Convs = new []
-    {
-        new { Type = "MPF", Mode = "explicit", },
-        new { Type = "MPQ", Mode = "explicit", },
-        new { Type = "int", Mode = "implicit", },
-        new { Type = "uint", Mode = "implicit", },
-        new { Type = "long", Mode = "implicit", },
-        new { Type = "ulong", Mode = "implicit", },
-        new { Type = "double", Mode = "explicit", },
-    };
-
-    var UOps = new []
-    {
-        new { Op = "-", Func = "mpz_neg" },
-    };
-
-    var BinOps = new []
-    {
-        new { Name = "Add", Op = "+", Func = "mpz_add" },
-        new { Name = "Sub", Op = "-", Func = "mpz_sub" },
-        new { Name = "Mul", Op = "*", Func = "mpz_mul" },
-        new { Name = "Div", Op = "/", Func = "mpz_tdiv_q" },
-        new { Name = "Rem", Op = "%", Func = "mpz_tdiv_r" },
-        new { Name = "And", Op = "&", Func = "mpz_and" },
-        new { Name = "Or", Op = "|", Func = "mpz_ior" },
-        new { Name = "XOr", Op = "^", Func = "mpz_xor" },
-    };
-    
-    var Funcs = new []
-    {
-        new { Name = "GetAbs", Func = "mpz_abs" },
-    };
-
-    var ComparisonOps = new []
-    {
-        new { Op = "<", },
-        new { Op = ">", },
-        new { Op = "<=", },
-        new { Op = ">=", },
-        new { Op = "==", },
-        new { Op = "!=", },
-    };
-
 #>
-using System;
-
-namespace ProCalc.Lib.MPIR
-{
-    public partial class MPZ
-    {
-        // Constructors:
-<#
-        foreach (var op in Inits)
-        {
-#>
-        public MPZ(<#= op.Type #> a)
-        {
-            MPIR.<#= op.InitFunc #>(ref S, a);
-        }
-
-<#
-        }
-#>
-
-        // Conversions:
-<#
-        foreach (var op in Convs)
-        {
-#>
-        public static <#= op.Mode #> operator MPZ(<#= op.Type #> a)
-        {
-            return new MPZ(a);
-        }
-
-<#
-        }
-#>
-
-        // Unary ops:
-<#
-        foreach (var op in UOps)
-        {
-#>
-        public static MPZ operator <#= op.Op #>(MPZ a)
-        {
-            var r = new MPZ();
-            MPIR.<#= op.Func #>(ref r.S, ref a.S);
-            return r;
-        }
-
-<#
-        }
-#>
-
-        // Binary ops:
-<#
-        foreach (var op in BinOps)
-        {
-#>
-        public MPZ <#= op.Name #>(MPZ b)
-        {
-            MPIR.<#= op.Func #>(ref S, ref S, ref b.S);
-            return this;
-        }
-
-        public static MPZ operator <#= op.Op #>(MPZ a, MPZ b)
-        {
-            var r = new MPZ();
-            MPIR.<#= op.Func #>(ref r.S, ref a.S, ref b.S);
-            return r;
-        }
-
-<#
-        }
-#>
-
-        // Funcs:
-<#
-        foreach (var op in Funcs)
-        {
-#>
-        public MPZ <#= op.Name #>()
-        {
-            var r = new MPZ();
-            MPIR.<#= op.Func #>(ref r.S, ref S);
-            return r;
-        }
-
-<#
-        }
-#>
-
-        // Comparison ops:
-<#
-        foreach (var op in ComparisonOps)
-        {
-#>
-        public static bool operator <#= op.Op #>(MPZ a, MPZ b)
-        {
-            return a.CompareTo(b) <#= op.Op #> 0;
-        }
-
-<#
-        }
-#>
-    }
-}
+<#@ include file="std_gen.tt" #>

@@ -121,7 +121,12 @@ namespace ProCalc.Lib.MPIR
 #>
         public MPQ <#= op.Name #>(MPQ b)
         {
-            MPIR.<#= op.Func #>(ref S, ref S, ref b.S);
+            return <#= op.Name #>(ref b.S);
+        }
+
+        internal MPQ <#= op.Name #>(ref MPIR.mpq_t b)
+        {
+            MPIR.<#= op.Func #>(ref S, ref S, ref b);
             return this;
         }
 

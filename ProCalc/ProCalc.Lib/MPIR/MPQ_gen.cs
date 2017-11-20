@@ -98,7 +98,12 @@ namespace ProCalc.Lib.MPIR
         // Binary ops:
         public MPQ Add(MPQ b)
         {
-            MPIR.mpq_add(ref S, ref S, ref b.S);
+            return Add(ref b.S);
+        }
+
+        internal MPQ Add(ref MPIR.mpq_t b)
+        {
+            MPIR.mpq_add(ref S, ref S, ref b);
             return this;
         }
 
@@ -111,7 +116,12 @@ namespace ProCalc.Lib.MPIR
 
         public MPQ Sub(MPQ b)
         {
-            MPIR.mpq_sub(ref S, ref S, ref b.S);
+            return Sub(ref b.S);
+        }
+
+        internal MPQ Sub(ref MPIR.mpq_t b)
+        {
+            MPIR.mpq_sub(ref S, ref S, ref b);
             return this;
         }
 
@@ -124,7 +134,12 @@ namespace ProCalc.Lib.MPIR
 
         public MPQ Mul(MPQ b)
         {
-            MPIR.mpq_mul(ref S, ref S, ref b.S);
+            return Mul(ref b.S);
+        }
+
+        internal MPQ Mul(ref MPIR.mpq_t b)
+        {
+            MPIR.mpq_mul(ref S, ref S, ref b);
             return this;
         }
 
@@ -137,7 +152,12 @@ namespace ProCalc.Lib.MPIR
 
         public MPQ Div(MPQ b)
         {
-            MPIR.mpq_div(ref S, ref S, ref b.S);
+            return Div(ref b.S);
+        }
+
+        internal MPQ Div(ref MPIR.mpq_t b)
+        {
+            MPIR.mpq_div(ref S, ref S, ref b);
             return this;
         }
 
