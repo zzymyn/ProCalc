@@ -5,27 +5,27 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProCalc.Lib.MPIR
+namespace ProCalc.Lib.GMP
 {
     public partial class MPF : IDisposable, IComparable<MPF>, IEquatable<MPF>
     {
-        internal MPIR.mpf_t S;
+        internal GMP.mpf_t S;
 
         public ulong Precision
         {
-            get { return MPIR.mpf_get_prec(ref S); }
-            set { MPIR.mpf_set_prec(ref S, value); }
+            get { return GMP.mpf_get_prec(ref S); }
+            set { GMP.mpf_set_prec(ref S, value); }
         }
 
         public MPF()
         {
-            MPIR.mpf_init2(ref S, 128);
+            GMP.mpf_init2(ref S, 128);
         }
 
-        private MPF(ref MPIR.mpf_t a)
+        private MPF(ref GMP.mpf_t a)
             :this()
         {
-            MPIR.mpf_set(ref S, ref a);
+            GMP.mpf_set(ref S, ref a);
         }
 
         public MPF(MPF a)
@@ -36,13 +36,13 @@ namespace ProCalc.Lib.MPIR
         public MPF(MPZ a)
             : this()
         {
-            MPIR.mpf_set_z(ref S, ref a.S);
+            GMP.mpf_set_z(ref S, ref a.S);
         }
 
         public MPF(MPQ a)
             : this()
         {
-            MPIR.mpf_set_q(ref S, ref a.S);
+            GMP.mpf_set_q(ref S, ref a.S);
         }
 
         public MPF(string a)
@@ -53,7 +53,7 @@ namespace ProCalc.Lib.MPIR
         public MPF(string a, int numericBase)
             : this()
         {
-            var r = MPIR.mpf_set_str(ref S, a, numericBase);
+            var r = GMP.mpf_set_str(ref S, a, numericBase);
             if (r != 0)
                 throw new FormatException("not a number");
         }
@@ -67,7 +67,7 @@ namespace ProCalc.Lib.MPIR
         {
             if (ReferenceEquals(a, null))
                 return 1;
-            return MPIR.mpf_cmp(ref S, ref a.S);
+            return GMP.mpf_cmp(ref S, ref a.S);
         }
 
         // TODO: make better
@@ -97,7 +97,7 @@ namespace ProCalc.Lib.MPIR
         {
             var sb = new StringBuilder(prec + 1);
             int exp = 0;
-            var r = MPIR.mpf_get_str(sb, ref exp, numericBase, (ulong)prec, ref S);
+            var r = GMP.mpf_get_str(sb, ref exp, numericBase, (ulong)prec, ref S);
 
             FormatScientific(sb, exp, numericBase);
 
@@ -108,7 +108,7 @@ namespace ProCalc.Lib.MPIR
         {
             var sb = new StringBuilder(prec + 1);
             int exp = 0;
-            var r = MPIR.mpf_get_str(sb, ref exp, numericBase, (ulong)prec, ref S);
+            var r = GMP.mpf_get_str(sb, ref exp, numericBase, (ulong)prec, ref S);
 
             if (exp > prec || sb.Length - exp > prec)
             {
@@ -181,7 +181,7 @@ namespace ProCalc.Lib.MPIR
 
         private void Free()
         {
-            MPIR.mpf_clear(ref S);
+            GMP.mpf_clear(ref S);
         }
     }
 }

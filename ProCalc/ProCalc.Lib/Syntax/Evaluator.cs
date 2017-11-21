@@ -1,4 +1,4 @@
-﻿using ProCalc.Lib.MPIR;
+﻿using ProCalc.Lib.GMP;
 using System;
 using System.Collections.Generic;
 using System.Linq;

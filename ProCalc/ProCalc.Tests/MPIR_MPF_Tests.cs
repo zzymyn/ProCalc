@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ProCalc.Lib.MPIR;
+using ProCalc.Lib.GMP;
 
 namespace ProCalc.Tests
 {

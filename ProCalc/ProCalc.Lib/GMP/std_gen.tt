@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProCalc.Lib.MPIR
+namespace ProCalc.Lib.GMP
 {
     public partial class <#= classDef.Name #>
     {
@@ -15,7 +15,7 @@ namespace ProCalc.Lib.MPIR
             if (op.Func != null)
             {
 #>
-            MPIR.<#= op.Func #>(ref S, <#= op.Args #>);
+            GMP.<#= op.Func #>(ref S, <#= op.Args #>);
 <#
             }
             foreach (var e in op.Extras)
@@ -51,7 +51,7 @@ namespace ProCalc.Lib.MPIR
         <#= op.Access #> static <#= classDef.Name #> operator <#= op.Op #>(<#= op.Sig #>)
         {
             var r = new <#= classDef.Name #>();
-            MPIR.<#= op.Func #>(ref r.S, <#= op.Args #>);
+            GMP.<#= op.Func #>(ref r.S, <#= op.Args #>);
             return r;
         }
 
@@ -66,7 +66,7 @@ namespace ProCalc.Lib.MPIR
         <#= op.Access #> <#= classDef.Name #> <#= op.Name #>(<#= op.Sig #>)
         {
             var r = new <#= classDef.Name #>();
-            MPIR.<#= op.Func #>(ref r.S, <#= op.Args #>);
+            GMP.<#= op.Func #>(ref r.S, <#= op.Args #>);
             return r;
         }
 
@@ -79,7 +79,7 @@ namespace ProCalc.Lib.MPIR
 #>
         <#= op.Access #> <#= classDef.Name #> <#= op.Name #>(<#= op.Sig #>)
         {
-            MPIR.<#= op.Func #>(ref S, <#= op.Args #>);
+            GMP.<#= op.Func #>(ref S, <#= op.Args #>);
             return this;
         }
 

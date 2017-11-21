@@ -11,14 +11,15 @@
         Name = "MPZ",
         Inits = new []
         {
-            new InitDef { Sig = "long a", Func = "mpz_init_set_si", Args = "a" },
-            new InitDef { Sig = "ulong a", Func = "mpz_init_set_ui", Args = "a" },
-            new InitDef { Sig = "double a", Func = "mpz_init_set_d", Args = "a" },
-            new InitDef { Access = "internal", Sig = "ref MPIR.mpz_t a", Func = "mpz_init_set", Args = "ref a" },
+            new InitDef { Sig = "int a", Func = "mpz_init_set_si", Args = "a" },
+            new InitDef { Sig = "uint a", Func = "mpz_init_set_ui", Args = "a" },
+            new InitDef { Sig = "long a", Chain = ": this(a.ToString())" },
+            new InitDef { Sig = "ulong a", Chain = ": this(a.ToString())" },
+            new InitDef { Access = "internal", Sig = "ref GMP.mpz_t a", Func = "mpz_init_set", Args = "ref a" },
             new InitDef { Sig = "MPZ a", Chain = ": this(ref a.S)" },
-            new InitDef { Access = "internal", Sig = "ref MPIR.mpq_t a", Chain = ": this()", Func = "mpz_set_q", Args = "ref a" },
+            new InitDef { Access = "internal", Sig = "ref GMP.mpq_t a", Chain = ": this()", Func = "mpz_set_q", Args = "ref a" },
             new InitDef { Sig = "MPQ a", Chain = ": this(ref a.S)" },
-            new InitDef { Access = "internal", Sig = "ref MPIR.mpf_t a", Chain = ": this()", Func = "mpz_set_f", Args = "ref a" },
+            new InitDef { Access = "internal", Sig = "ref GMP.mpf_t a", Chain = ": this()", Func = "mpz_set_f", Args = "ref a" },
             new InitDef { Sig = "MPF a", Chain = ": this(ref a.S)" },
         },
         Convs = new []
@@ -29,27 +30,26 @@
             new ConvDef { Type = "uint", Mode = "implicit", },
             new ConvDef { Type = "long", Mode = "implicit", },
             new ConvDef { Type = "ulong", Mode = "implicit", },
-            new ConvDef { Type = "double", Mode = "explicit", },
         },
         Ops = new []
         {
             new OpDef { Op = "-", Sig = "MPZ a", Func = "mpz_neg", Args = "ref a.S" },
             
             new OpDef { Op = "+", Sig = "MPZ a, MPZ b", Func = "mpz_add", Args = "ref a.S, ref b.S" },
-            new OpDef { Op = "+", Sig = "MPZ a, ulong b", Func = "mpz_add_ui", Args = "ref a.S, b" },
+            new OpDef { Op = "+", Sig = "MPZ a, uint b", Func = "mpz_add_ui", Args = "ref a.S, b" },
             
             new OpDef { Op = "-", Sig = "MPZ a, MPZ b", Func = "mpz_sub", Args = "ref a.S, ref b.S" },
-            new OpDef { Op = "-", Sig = "MPZ a, ulong b", Func = "mpz_sub_ui", Args = "ref a.S, b" },
+            new OpDef { Op = "-", Sig = "MPZ a, uint b", Func = "mpz_sub_ui", Args = "ref a.S, b" },
             
             new OpDef { Op = "*", Sig = "MPZ a, MPZ b", Func = "mpz_mul", Args = "ref a.S, ref b.S" },
-            new OpDef { Op = "*", Sig = "MPZ a, long b", Func = "mpz_mul_si", Args = "ref a.S, b" },
-            new OpDef { Op = "*", Sig = "MPZ a, ulong b", Func = "mpz_mul_ui", Args = "ref a.S, b" },
+            new OpDef { Op = "*", Sig = "MPZ a, int b", Func = "mpz_mul_si", Args = "ref a.S, b" },
+            new OpDef { Op = "*", Sig = "MPZ a, uint b", Func = "mpz_mul_ui", Args = "ref a.S, b" },
             
             new OpDef { Op = "/", Sig = "MPZ a, MPZ b", Func = "mpz_tdiv_q", Args = "ref a.S, ref b.S" },
-            new OpDef { Op = "/", Sig = "MPZ a, ulong b", Func = "mpz_tdiv_q_ui", Args = "ref a.S, b" },
+            new OpDef { Op = "/", Sig = "MPZ a, uint b", Func = "mpz_tdiv_q_ui", Args = "ref a.S, b" },
             
             new OpDef { Op = "%", Sig = "MPZ a, MPZ b", Func = "mpz_tdiv_r", Args = "ref a.S, ref b.S" },
-            new OpDef { Op = "%", Sig = "MPZ a, ulong b", Func = "mpz_tdiv_r_ui", Args = "ref a.S, b" },
+            new OpDef { Op = "%", Sig = "MPZ a, uint b", Func = "mpz_tdiv_r_ui", Args = "ref a.S, b" },
             
             new OpDef { Op = "&", Sig = "MPZ a, MPZ b", Func = "mpz_and", Args = "ref a.S, ref b.S" },
             
@@ -64,25 +64,25 @@
         Funcs = new[]
         {
             new FuncDef { Name = "Add", Sig = "MPZ b", Func = "mpz_add", Args = "ref S, ref b.S" },
-            new FuncDef { Name = "Add", Access = "internal", Sig = "ref MPIR.mpz_t b", Func = "mpz_add", Args = "ref S, ref b" },
-            new FuncDef { Name = "Add", Sig = "ulong b", Func = "mpz_add_ui", Args = "ref S, b" },
+            new FuncDef { Name = "Add", Access = "internal", Sig = "ref GMP.mpz_t b", Func = "mpz_add", Args = "ref S, ref b" },
+            new FuncDef { Name = "Add", Sig = "uint b", Func = "mpz_add_ui", Args = "ref S, b" },
 
             new FuncDef { Name = "Sub", Sig = "MPZ b", Func = "mpz_sub", Args = "ref S, ref b.S" },
-            new FuncDef { Name = "Sub", Access = "internal", Sig = "ref MPIR.mpz_t b", Func = "mpz_sub", Args = "ref S, ref b" },
-            new FuncDef { Name = "Sub", Sig = "ulong b", Func = "mpz_sub_ui", Args = "ref S, b" },
+            new FuncDef { Name = "Sub", Access = "internal", Sig = "ref GMP.mpz_t b", Func = "mpz_sub", Args = "ref S, ref b" },
+            new FuncDef { Name = "Sub", Sig = "uint b", Func = "mpz_sub_ui", Args = "ref S, b" },
             
             new FuncDef { Name = "Mul", Sig = "MPZ b", Func = "mpz_mul", Args = "ref S, ref b.S" },
-            new FuncDef { Name = "Mul", Access = "internal", Sig = "ref MPIR.mpz_t b", Func = "mpz_mul", Args = "ref S, ref b" },
-            new FuncDef { Name = "Mul", Sig = "long b", Func = "mpz_mul_si", Args = "ref S, b" },
-            new FuncDef { Name = "Mul", Sig = "ulong b", Func = "mpz_mul_ui", Args = "ref S, b" },
+            new FuncDef { Name = "Mul", Access = "internal", Sig = "ref GMP.mpz_t b", Func = "mpz_mul", Args = "ref S, ref b" },
+            new FuncDef { Name = "Mul", Sig = "int b", Func = "mpz_mul_si", Args = "ref S, b" },
+            new FuncDef { Name = "Mul", Sig = "uint b", Func = "mpz_mul_ui", Args = "ref S, b" },
             
             new FuncDef { Name = "Div", Sig = "MPZ b", Func = "mpz_tdiv_q", Args = "ref S, ref b.S" },
-            new FuncDef { Name = "Div", Access = "internal", Sig = "ref MPIR.mpz_t b", Func = "mpz_tdiv_q", Args = "ref S, ref b" },
-            new FuncDef { Name = "Div", Access = "internal", Sig = "ulong b", Func = "mpz_tdiv_q_ui", Args = "ref S, b" },
+            new FuncDef { Name = "Div", Access = "internal", Sig = "ref GMP.mpz_t b", Func = "mpz_tdiv_q", Args = "ref S, ref b" },
+            new FuncDef { Name = "Div", Access = "internal", Sig = "uint b", Func = "mpz_tdiv_q_ui", Args = "ref S, b" },
             
             new FuncDef { Name = "Rem", Sig = "MPZ b", Func = "mpz_tdiv_r", Args = "ref S, ref b.S" },
-            new FuncDef { Name = "Rem", Access = "internal", Sig = "ref MPIR.mpz_t b", Func = "mpz_tdiv_r", Args = "ref S, ref b" },
-            new FuncDef { Name = "Rem", Access = "internal", Sig = "ulong b", Func = "mpz_tdiv_r_ui", Args = "ref S, b" },
+            new FuncDef { Name = "Rem", Access = "internal", Sig = "ref GMP.mpz_t b", Func = "mpz_tdiv_r", Args = "ref S, ref b" },
+            new FuncDef { Name = "Rem", Access = "internal", Sig = "uint b", Func = "mpz_tdiv_r_ui", Args = "ref S, b" },
         },
     };
 #>

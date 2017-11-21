@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using ProCalc.Lib.Syntax;
-using ProCalc.Lib.MPIR;
+using ProCalc.Lib.GMP;
 
 namespace ProCalc.UI
 {

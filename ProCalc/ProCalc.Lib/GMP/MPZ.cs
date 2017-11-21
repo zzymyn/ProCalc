@@ -5,18 +5,18 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProCalc.Lib.MPIR
+namespace ProCalc.Lib.GMP
 {
     /// <summary>
     /// Wrapper around MPIR's mpz_t bigint class.
     /// </summary>
     public partial class MPZ : IDisposable, IComparable<MPZ>, IEquatable<MPZ>
     {
-        internal MPIR.mpz_t S;
+        internal GMP.mpz_t S;
 
         public MPZ()
         {
-            MPIR.mpz_init(ref S);
+            GMP.mpz_init(ref S);
         }
 
         public MPZ(string a)
@@ -26,7 +26,7 @@ namespace ProCalc.Lib.MPIR
 
         public MPZ(string a, int numericBase)
         {
-            var r = MPIR.mpz_init_set_str(ref S, a, numericBase);
+            var r = GMP.mpz_init_set_str(ref S, a, numericBase);
             if (r != 0)
                 throw new FormatException("not a number");
         }
@@ -36,10 +36,10 @@ namespace ProCalc.Lib.MPIR
             Free();
         }
 
-        public static MPZ Pow(ulong a, ulong b)
+        public static MPZ Pow(uint a, uint b)
         {
             var r = new MPZ();
-            MPIR.mpz_ui_pow_ui(ref r.S, a, b);
+            GMP.mpz_ui_pow_ui(ref r.S, a, b);
             return r;
         }
 
@@ -47,7 +47,7 @@ namespace ProCalc.Lib.MPIR
         {
             var r = new MPZ();
             rem = new MPZ();
-            MPIR.mpz_cdiv_qr(ref r.S, ref rem.S, ref S, ref b.S);
+            GMP.mpz_cdiv_qr(ref r.S, ref rem.S, ref S, ref b.S);
             return r;
         }
 
@@ -55,7 +55,7 @@ namespace ProCalc.Lib.MPIR
         {
             if (ReferenceEquals(a, null))
                 return 1;
-            return MPIR.mpz_cmp(ref S, ref a.S);
+            return GMP.mpz_cmp(ref S, ref a.S);
         }
 
         // TODO: make better
@@ -88,29 +88,29 @@ namespace ProCalc.Lib.MPIR
 
         public StringBuilder ToStringBuilder(int numericBase)
         {
-            var size = (int)MPIR.mpz_sizeinbase(ref S, numericBase) + 1;
+            var size = (int)GMP.mpz_sizeinbase(ref S, numericBase) + 1;
             var sb = new StringBuilder(size);
-            MPIR.mpz_get_str(sb, numericBase, ref S);
+            GMP.mpz_get_str(sb, numericBase, ref S);
             return sb;
         }
 
         public double ToDouble()
         {
-            return MPIR.mpz_get_d(ref S);
+            return GMP.mpz_get_d(ref S);
         }
 
-        public long ToInt64()
+        public int ToInt32()
         {
-            if (MPIR.mpz_fits_si_p(ref S) == 0)
+            if (GMP.mpz_fits_sint_p(ref S) == 0)
                 throw new OverflowException();
-            return MPIR.mpz_get_si(ref S);
+            return GMP.mpz_get_si(ref S);
         }
 
-        public ulong ToUInt64()
+        public uint ToUInt32()
         {
-            if (MPIR.mpz_fits_ui_p(ref S) == 0)
+            if (GMP.mpz_fits_uint_p(ref S) == 0)
                 throw new OverflowException();
-            return MPIR.mpz_get_ui(ref S);
+            return GMP.mpz_get_ui(ref S);
         }
 
         public void Dispose()
@@ -121,7 +121,7 @@ namespace ProCalc.Lib.MPIR
 
         private void Free()
         {
-            MPIR.mpz_clear(ref S);
+            GMP.mpz_clear(ref S);
         }
     }
 }

@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProCalc.Lib.MPIR
+namespace ProCalc.Lib.GMP
 {
     public partial class MPQ : IDisposable, IComparable<MPQ>, IEquatable<MPQ>
     {
-        internal MPIR.mpq_t S;
+        internal GMP.mpq_t S;
 
         public MPZ Numerator
         {
@@ -24,7 +24,7 @@ namespace ProCalc.Lib.MPIR
 
         public MPQ()
         {
-            MPIR.mpq_init(ref S);
+            GMP.mpq_init(ref S);
         }
 
         public MPQ(string a)
@@ -35,10 +35,10 @@ namespace ProCalc.Lib.MPIR
         public MPQ(string a, int numericBase)
             : this()
         {
-            var r = MPIR.mpq_set_str(ref S, a, numericBase);
+            var r = GMP.mpq_set_str(ref S, a, numericBase);
             if (r != 0)
                 throw new FormatException("not a number");
-            MPIR.mpq_canonicalize(ref S);
+            GMP.mpq_canonicalize(ref S);
         }
 
         ~MPQ()
@@ -50,9 +50,9 @@ namespace ProCalc.Lib.MPIR
         {
             if (ReferenceEquals(a, null))
                 return 1;
-            if (MPIR.mpq_equal(ref S, ref a.S) != 0)
+            if (GMP.mpq_equal(ref S, ref a.S) != 0)
                 return 0;
-            return MPIR.mpq_cmp(ref S, ref a.S);
+            return GMP.mpq_cmp(ref S, ref a.S);
         }
 
         // TODO: make better
@@ -80,9 +80,9 @@ namespace ProCalc.Lib.MPIR
 
         public string ToString(int numericBase)
         {
-            var size = (int)MPIR.mpz_sizeinbase(ref S._mp_num, numericBase) + (int)MPIR.mpz_sizeinbase(ref S._mp_den, numericBase) + 2;
+            var size = (int)GMP.mpz_sizeinbase(ref S._mp_num, numericBase) + (int)GMP.mpz_sizeinbase(ref S._mp_den, numericBase) + 2;
             var sb = new StringBuilder(size + 1);
-            MPIR.mpq_get_str(sb, numericBase, ref S);
+            GMP.mpq_get_str(sb, numericBase, ref S);
             return sb.ToString();
         }
 
@@ -94,7 +94,7 @@ namespace ProCalc.Lib.MPIR
 
         private void Free()
         {
-            MPIR.mpq_clear(ref S);
+            GMP.mpq_clear(ref S);
         }
 
     }

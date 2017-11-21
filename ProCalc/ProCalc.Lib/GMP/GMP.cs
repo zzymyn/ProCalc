@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace ProCalc.Lib.MPIR
+namespace ProCalc.Lib.GMP
 {
-    internal static partial class MPIR
+    internal static partial class GMP
     {
         [StructLayout(LayoutKind.Sequential)]
         internal struct mpz_t

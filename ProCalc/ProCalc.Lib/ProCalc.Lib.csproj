@@ -40,27 +40,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GMP\GMP_gen.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GMP_gen.tt</DependentUpon>
+    </Compile>
     <Compile Include="Syntax\Evaluator.cs" />
     <Compile Include="Syntax\Lexer.cs" />
     <Compile Include="Syntax\Parser.cs" />
     <Compile Include="Syntax\ParsingException.cs" />
     <Compile Include="Syntax\Token.cs" />
     <Compile Include="Syntax\TokenType.cs" />
-    <Compile Include="MPIR\MPF.cs" />
-    <Compile Include="MPIR\MPIR.cs" />
-    <Compile Include="MPIR\MPIR_gen.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MPIR_gen.tt</DependentUpon>
-    </Compile>
-    <Compile Include="MPIR\MPQ.cs" />
-    <Compile Include="MPIR\MPZ.cs" />
-    <Compile Include="MPIR\MPQ_gen.cs">
+    <Compile Include="GMP\MPF.cs" />
+    <Compile Include="GMP\GMP.cs" />
+    <Compile Include="GMP\MPQ.cs" />
+    <Compile Include="GMP\MPZ.cs" />
+    <Compile Include="GMP\MPQ_gen.cs">
       <DependentUpon>MPQ_gen.tt</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="MPIR\MPZ_gen.cs">
+    <Compile Include="GMP\MPZ_gen.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>MPZ_gen.tt</DependentUpon>
@@ -68,23 +68,27 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\mpir\dll\x64\Release\mpir.dll">
-      <Link>mpir.dll</Link>
+    <Content Include="..\..\gmp\libgmp-10.dll">
+      <Link>libgmp-10.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="MPIR\MPIR_gen.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>MPIR_gen.cs</LastGenOutput>
+    <Content Include="..\..\gmp\libmpfr-4.dll">
+      <Link>libmpfr-4.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="MPIR\MPQ_gen.tt">
+    <Content Include="GMP\GMP_gen.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>GMP_gen.cs</LastGenOutput>
+    </Content>
+    <Content Include="GMP\MPQ_gen.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>MPQ_gen.cs</LastGenOutput>
     </Content>
-    <Content Include="MPIR\MPZ_gen.tt">
+    <Content Include="GMP\MPZ_gen.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>MPZ_gen.cs</LastGenOutput>
     </Content>
-    <Content Include="MPIR\std_gen.tt" />
+    <Content Include="GMP\std_gen.tt" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

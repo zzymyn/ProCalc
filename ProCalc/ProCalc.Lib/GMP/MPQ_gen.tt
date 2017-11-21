@@ -6,21 +6,25 @@
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#
-    var stdExtras = new [] {"MPIR.mpq_canonicalize(ref S);"};
+    var stdExtras = new [] {"GMP.mpq_canonicalize(ref S);"};
 
     var classDef = new ClassDef()
     {
         Name = "MPQ",
         Inits = new []
         {
-            new InitDef { Sig = "long a", Chain = ": this()", Func = "mpq_set_si", Args = "a, 1ul", Extras = stdExtras },
-            new InitDef { Sig = "long a, ulong b", Chain = ": this()", Func = "mpq_set_si", Args = "a, b", Extras = stdExtras },
-            new InitDef { Sig = "ulong a", Chain = ": this()", Func = "mpq_set_ui", Args = "a, 1ul", Extras = stdExtras },
-            new InitDef { Sig = "ulong a, ulong b", Chain = ": this()", Func = "mpq_set_ui", Args = "a, b", Extras = stdExtras },
+            new InitDef { Sig = "int a", Chain = ": this()", Func = "mpq_set_si", Args = "a, 1", Extras = stdExtras },
+            new InitDef { Sig = "int a, uint b", Chain = ": this()", Func = "mpq_set_si", Args = "a, b", Extras = stdExtras },
+            new InitDef { Sig = "uint a", Chain = ": this()", Func = "mpq_set_ui", Args = "a, 1", Extras = stdExtras },
+            new InitDef { Sig = "uint a, uint b", Chain = ": this()", Func = "mpq_set_ui", Args = "a, b", Extras = stdExtras },
+            new InitDef { Sig = "long a", Chain = ": this(a.ToString())" },
+            new InitDef { Sig = "long a, ulong b", Chain = ": this(string.Format(\"{0}/{1}\", a, b))" },
+            new InitDef { Sig = "ulong a", Chain = ": this(a.ToString())" },
+            new InitDef { Sig = "ulong a, ulong b", Chain = ": this(string.Format(\"{0}/{1}\", a, b))" },
             new InitDef { Sig = "double a", Chain = ": this()", Func = "mpq_set_d", Args = "a", Extras = stdExtras },
-            new InitDef { Access = "internal", Sig = "ref MPIR.mpq_t a", Chain = ": this()", Func = "mpq_set", Args = "ref a" },
+            new InitDef { Access = "internal", Sig = "ref GMP.mpq_t a", Chain = ": this()", Func = "mpq_set", Args = "ref a" },
             new InitDef { Sig = "MPQ a", Chain = ": this(ref a.S)" },
-            new InitDef { Access = "internal", Sig = "ref MPIR.mpz_t a", Chain = ": this()", Func = "mpq_set_z", Args = "ref a", Extras = stdExtras },
+            new InitDef { Access = "internal", Sig = "ref GMP.mpz_t a", Chain = ": this()", Func = "mpq_set_z", Args = "ref a", Extras = stdExtras },
             new InitDef { Sig = "MPZ a", Chain = ": this(ref a.S)" },
         },
         Convs = new []
@@ -52,16 +56,16 @@
         Funcs = new[]
         {
             new FuncDef { Name = "Add", Sig = "MPQ b", Func = "mpq_add", Args = "ref S, ref b.S" },
-            new FuncDef { Name = "Add", Access = "internal", Sig = "ref MPIR.mpq_t b", Func = "mpq_add", Args = "ref S, ref b" },
+            new FuncDef { Name = "Add", Access = "internal", Sig = "ref GMP.mpq_t b", Func = "mpq_add", Args = "ref S, ref b" },
 
             new FuncDef { Name = "Sub", Sig = "MPQ b", Func = "mpq_sub", Args = "ref S, ref b.S" },
-            new FuncDef { Name = "Sub", Access = "internal", Sig = "ref MPIR.mpq_t b", Func = "mpq_sub", Args = "ref S, ref b" },
+            new FuncDef { Name = "Sub", Access = "internal", Sig = "ref GMP.mpq_t b", Func = "mpq_sub", Args = "ref S, ref b" },
             
             new FuncDef { Name = "Mul", Sig = "MPQ b", Func = "mpq_mul", Args = "ref S, ref b.S" },
-            new FuncDef { Name = "Mul", Access = "internal", Sig = "ref MPIR.mpq_t b", Func = "mpq_mul", Args = "ref S, ref b" },
+            new FuncDef { Name = "Mul", Access = "internal", Sig = "ref GMP.mpq_t b", Func = "mpq_mul", Args = "ref S, ref b" },
             
             new FuncDef { Name = "Div", Sig = "MPQ b", Func = "mpq_div", Args = "ref S, ref b.S" },
-            new FuncDef { Name = "Div", Access = "internal", Sig = "ref MPIR.mpq_t b", Func = "mpq_div", Args = "ref S, ref b" },
+            new FuncDef { Name = "Div", Access = "internal", Sig = "ref GMP.mpq_t b", Func = "mpq_div", Args = "ref S, ref b" },
         },
     };
 #>

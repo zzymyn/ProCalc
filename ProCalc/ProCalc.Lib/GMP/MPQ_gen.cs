@@ -1,53 +1,69 @@
 ﻿using System;
 
-namespace ProCalc.Lib.MPIR
+namespace ProCalc.Lib.GMP
 {
     public partial class MPQ
     {
         // Constructors:
-        public MPQ(long a) : this()
+        public MPQ(int a) : this()
         {
-            MPIR.mpq_set_si(ref S, a, 1ul);
-            MPIR.mpq_canonicalize(ref S);
+            GMP.mpq_set_si(ref S, a, 1);
+            GMP.mpq_canonicalize(ref S);
         }
 
-        public MPQ(long a, ulong b) : this()
+        public MPQ(int a, uint b) : this()
         {
-            MPIR.mpq_set_si(ref S, a, b);
-            MPIR.mpq_canonicalize(ref S);
+            GMP.mpq_set_si(ref S, a, b);
+            GMP.mpq_canonicalize(ref S);
         }
 
-        public MPQ(ulong a) : this()
+        public MPQ(uint a) : this()
         {
-            MPIR.mpq_set_ui(ref S, a, 1ul);
-            MPIR.mpq_canonicalize(ref S);
+            GMP.mpq_set_ui(ref S, a, 1);
+            GMP.mpq_canonicalize(ref S);
         }
 
-        public MPQ(ulong a, ulong b) : this()
+        public MPQ(uint a, uint b) : this()
         {
-            MPIR.mpq_set_ui(ref S, a, b);
-            MPIR.mpq_canonicalize(ref S);
+            GMP.mpq_set_ui(ref S, a, b);
+            GMP.mpq_canonicalize(ref S);
+        }
+
+        public MPQ(long a) : this(a.ToString())
+        {
+        }
+
+        public MPQ(long a, ulong b) : this(string.Format("{0}/{1}", a, b))
+        {
+        }
+
+        public MPQ(ulong a) : this(a.ToString())
+        {
+        }
+
+        public MPQ(ulong a, ulong b) : this(string.Format("{0}/{1}", a, b))
+        {
         }
 
         public MPQ(double a) : this()
         {
-            MPIR.mpq_set_d(ref S, a);
-            MPIR.mpq_canonicalize(ref S);
+            GMP.mpq_set_d(ref S, a);
+            GMP.mpq_canonicalize(ref S);
         }
 
-        internal MPQ(ref MPIR.mpq_t a) : this()
+        internal MPQ(ref GMP.mpq_t a) : this()
         {
-            MPIR.mpq_set(ref S, ref a);
+            GMP.mpq_set(ref S, ref a);
         }
 
         public MPQ(MPQ a) : this(ref a.S)
         {
         }
 
-        internal MPQ(ref MPIR.mpz_t a) : this()
+        internal MPQ(ref GMP.mpz_t a) : this()
         {
-            MPIR.mpq_set_z(ref S, ref a);
-            MPIR.mpq_canonicalize(ref S);
+            GMP.mpq_set_z(ref S, ref a);
+            GMP.mpq_canonicalize(ref S);
         }
 
         public MPQ(MPZ a) : this(ref a.S)
@@ -89,35 +105,35 @@ namespace ProCalc.Lib.MPIR
         public static MPQ operator -(MPQ a)
         {
             var r = new MPQ();
-            MPIR.mpq_neg(ref r.S, ref a.S);
+            GMP.mpq_neg(ref r.S, ref a.S);
             return r;
         }
 
         public static MPQ operator +(MPQ a, MPQ b)
         {
             var r = new MPQ();
-            MPIR.mpq_add(ref r.S, ref a.S, ref b.S);
+            GMP.mpq_add(ref r.S, ref a.S, ref b.S);
             return r;
         }
 
         public static MPQ operator -(MPQ a, MPQ b)
         {
             var r = new MPQ();
-            MPIR.mpq_sub(ref r.S, ref a.S, ref b.S);
+            GMP.mpq_sub(ref r.S, ref a.S, ref b.S);
             return r;
         }
 
         public static MPQ operator *(MPQ a, MPQ b)
         {
             var r = new MPQ();
-            MPIR.mpq_mul(ref r.S, ref a.S, ref b.S);
+            GMP.mpq_mul(ref r.S, ref a.S, ref b.S);
             return r;
         }
 
         public static MPQ operator /(MPQ a, MPQ b)
         {
             var r = new MPQ();
-            MPIR.mpq_div(ref r.S, ref a.S, ref b.S);
+            GMP.mpq_div(ref r.S, ref a.S, ref b.S);
             return r;
         }
 
@@ -125,62 +141,62 @@ namespace ProCalc.Lib.MPIR
         public MPQ GetAbs()
         {
             var r = new MPQ();
-            MPIR.mpq_abs(ref r.S, ref S);
+            GMP.mpq_abs(ref r.S, ref S);
             return r;
         }
 
         public MPQ GetInv()
         {
             var r = new MPQ();
-            MPIR.mpq_inv(ref r.S, ref S);
+            GMP.mpq_inv(ref r.S, ref S);
             return r;
         }
 
         public MPQ Add(MPQ b)
         {
-            MPIR.mpq_add(ref S, ref S, ref b.S);
+            GMP.mpq_add(ref S, ref S, ref b.S);
             return this;
         }
 
-        internal MPQ Add(ref MPIR.mpq_t b)
+        internal MPQ Add(ref GMP.mpq_t b)
         {
-            MPIR.mpq_add(ref S, ref S, ref b);
+            GMP.mpq_add(ref S, ref S, ref b);
             return this;
         }
 
         public MPQ Sub(MPQ b)
         {
-            MPIR.mpq_sub(ref S, ref S, ref b.S);
+            GMP.mpq_sub(ref S, ref S, ref b.S);
             return this;
         }
 
-        internal MPQ Sub(ref MPIR.mpq_t b)
+        internal MPQ Sub(ref GMP.mpq_t b)
         {
-            MPIR.mpq_sub(ref S, ref S, ref b);
+            GMP.mpq_sub(ref S, ref S, ref b);
             return this;
         }
 
         public MPQ Mul(MPQ b)
         {
-            MPIR.mpq_mul(ref S, ref S, ref b.S);
+            GMP.mpq_mul(ref S, ref S, ref b.S);
             return this;
         }
 
-        internal MPQ Mul(ref MPIR.mpq_t b)
+        internal MPQ Mul(ref GMP.mpq_t b)
         {
-            MPIR.mpq_mul(ref S, ref S, ref b);
+            GMP.mpq_mul(ref S, ref S, ref b);
             return this;
         }
 
         public MPQ Div(MPQ b)
         {
-            MPIR.mpq_div(ref S, ref S, ref b.S);
+            GMP.mpq_div(ref S, ref S, ref b.S);
             return this;
         }
 
-        internal MPQ Div(ref MPIR.mpq_t b)
+        internal MPQ Div(ref GMP.mpq_t b)
         {
-            MPIR.mpq_div(ref S, ref S, ref b);
+            GMP.mpq_div(ref S, ref S, ref b);
             return this;
         }
 

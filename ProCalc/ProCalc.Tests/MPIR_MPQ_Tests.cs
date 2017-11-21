@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ProCalc.Lib.MPIR;
+using ProCalc.Lib.GMP;
 
 namespace ProCalc.Tests
 {
@@ -31,6 +31,10 @@ namespace ProCalc.Tests
             Assert.AreEqual("3/4", new MPQ(0.75f).ToString());
             Assert.AreEqual("3/4", new MPQ(0.75).ToString());
             Assert.AreEqual("1/10", new MPQ(1, 10).ToString());
+            Assert.AreEqual("123456789123456789/123456789123456823", new MPQ(123456789123456789L, 123456789123456823L).ToString());
+            Assert.AreEqual("-123456789123456789/123456789123456823", new MPQ(-123456789123456789L, 123456789123456823L).ToString());
+            Assert.AreEqual("123456789123456789/123456789123456823", new MPQ(123456789123456789L, 123456789123456823L).ToString());
+            Assert.AreEqual("-123456789123456789/123456789123456823", new MPQ(-123456789123456789L, 123456789123456823L).ToString());
         }
 
         [TestMethod]
