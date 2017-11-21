@@ -7,73 +7,51 @@ using System.Threading.Tasks;
 
 namespace ProCalc.Lib.GMP
 {
-    public partial class MPF : IDisposable, IComparable<MPF>, IEquatable<MPF>
+    public partial class MPFR : IDisposable, IComparable<MPFR>, IEquatable<MPFR>
     {
-        internal GMP.mpf_t S;
+        internal const GMP.mpfr_rnd_t DefaultRnd = GMP.mpfr_rnd_t.MPFR_RNDN;
 
-        public static uint DefaultPrecision
+        internal GMP.mpfr_t S;
+
+        public static int DefaultPrecision
         {
-            get { return GMP.mpf_get_default_prec(); }
-            set { GMP.mpf_set_default_prec(value); }
+            get { return GMP.mpfr_get_default_prec(); }
+            set { GMP.mpfr_set_default_prec(value); }
         }
 
-        public uint Precision
+        public int Precision
         {
-            get { return GMP.mpf_get_prec(ref S); }
-            set { GMP.mpf_set_prec(ref S, value); }
+            get { return GMP.mpfr_get_prec(ref S); }
+            set { GMP.mpfr_set_prec(ref S, value); }
         }
 
-        public MPF()
+        public MPFR()
         {
-            GMP.mpf_init2(ref S, 128);
+            GMP.mpfr_init(ref S);
         }
 
-        private MPF(ref GMP.mpf_t a)
-            :this()
-        {
-            GMP.mpf_set(ref S, ref a);
-        }
-
-        public MPF(MPF a)
-            : this(ref a.S)
-        {
-        }
-
-        public MPF(MPZ a)
-            : this()
-        {
-            GMP.mpf_set_z(ref S, ref a.S);
-        }
-
-        public MPF(MPQ a)
-            : this()
-        {
-            GMP.mpf_set_q(ref S, ref a.S);
-        }
-
-        public MPF(string a)
+        public MPFR(string a)
             : this(a, 10)
         {
         }
 
-        public MPF(string a, int numericBase)
-            : this()
+        public MPFR(string a, int numericBase)
         {
-            var r = GMP.mpf_set_str(ref S, a, numericBase);
+            var r = GMP.mpfr_init_set_str(ref S, a, numericBase, DefaultRnd);
             if (r != 0)
                 throw new FormatException("not a number");
         }
 
-        ~MPF()
+        ~MPFR()
         {
             Free();
         }
 
-        public int CompareTo(MPF a)
+        public int CompareTo(MPFR a)
         {
             if (ReferenceEquals(a, null))
                 return 1;
-            return GMP.mpf_cmp(ref S, ref a.S);
+            return GMP.mpfr_cmp(ref S, ref a.S);
         }
 
         // TODO: make better
@@ -84,10 +62,10 @@ namespace ProCalc.Lib.GMP
 
         public override bool Equals(object obj)
         {
-            return Equals(obj as MPF);
+            return Equals(obj as MPFR);
         }
 
-        public bool Equals(MPF a)
+        public bool Equals(MPFR a)
         {
             if (ReferenceEquals(a, null))
                 return false;
@@ -103,7 +81,7 @@ namespace ProCalc.Lib.GMP
         {
             var sb = new StringBuilder(prec + 1);
             int exp = 0;
-            var r = GMP.mpf_get_str(sb, ref exp, numericBase, (ulong)prec, ref S);
+            var r = GMP.mpfr_get_str(sb, ref exp, numericBase, (ulong)prec, ref S, DefaultRnd);
 
             FormatScientific(sb, exp, numericBase);
 
@@ -114,7 +92,7 @@ namespace ProCalc.Lib.GMP
         {
             var sb = new StringBuilder(prec + 1);
             int exp = 0;
-            var r = GMP.mpf_get_str(sb, ref exp, numericBase, (ulong)prec, ref S);
+            var r = GMP.mpfr_get_str(sb, ref exp, numericBase, (ulong)prec, ref S, DefaultRnd);
 
             if (exp > prec || sb.Length - exp > prec)
             {
@@ -187,7 +165,7 @@ namespace ProCalc.Lib.GMP
 
         private void Free()
         {
-            GMP.mpf_clear(ref S);
+            GMP.mpfr_clear(ref S);
         }
     }
 }

@@ -21,11 +21,14 @@
             new InitDef { Sig = "MPQ a", Chain = ": this(ref a.S)" },
             new InitDef { Access = "internal", Sig = "ref GMP.mpf_t a", Chain = ": this()", Func = "mpz_set_f", Args = "ref a" },
             new InitDef { Sig = "MPF a", Chain = ": this(ref a.S)" },
+            new InitDef { Access = "internal", Sig = "ref GMP.mpfr_t a", Chain = ": this()", Func = "mpfr_get_z", Args = "ref a, MPFR.DefaultRnd" },
+            new InitDef { Sig = "MPFR a", Chain = ": this(ref a.S)" },
         },
         Convs = new []
         {
-            new ConvDef { Type = "MPF", Mode = "explicit", },
             new ConvDef { Type = "MPQ", Mode = "explicit", },
+            new ConvDef { Type = "MPF", Mode = "explicit", },
+            new ConvDef { Type = "MPFR", Mode = "explicit", },
             new ConvDef { Type = "int", Mode = "implicit", },
             new ConvDef { Type = "uint", Mode = "implicit", },
             new ConvDef { Type = "long", Mode = "implicit", },
@@ -34,32 +37,18 @@
         Ops = new []
         {
             new OpDef { Op = "-", Sig = "MPZ a", Func = "mpz_neg", Args = "ref a.S" },
-            
             new OpDef { Op = "+", Sig = "MPZ a, MPZ b", Func = "mpz_add", Args = "ref a.S, ref b.S" },
-            new OpDef { Op = "+", Sig = "MPZ a, uint b", Func = "mpz_add_ui", Args = "ref a.S, b" },
-            
             new OpDef { Op = "-", Sig = "MPZ a, MPZ b", Func = "mpz_sub", Args = "ref a.S, ref b.S" },
-            new OpDef { Op = "-", Sig = "MPZ a, uint b", Func = "mpz_sub_ui", Args = "ref a.S, b" },
-            
             new OpDef { Op = "*", Sig = "MPZ a, MPZ b", Func = "mpz_mul", Args = "ref a.S, ref b.S" },
-            new OpDef { Op = "*", Sig = "MPZ a, int b", Func = "mpz_mul_si", Args = "ref a.S, b" },
-            new OpDef { Op = "*", Sig = "MPZ a, uint b", Func = "mpz_mul_ui", Args = "ref a.S, b" },
-            
             new OpDef { Op = "/", Sig = "MPZ a, MPZ b", Func = "mpz_tdiv_q", Args = "ref a.S, ref b.S" },
-            new OpDef { Op = "/", Sig = "MPZ a, uint b", Func = "mpz_tdiv_q_ui", Args = "ref a.S, b" },
-            
             new OpDef { Op = "%", Sig = "MPZ a, MPZ b", Func = "mpz_tdiv_r", Args = "ref a.S, ref b.S" },
-            new OpDef { Op = "%", Sig = "MPZ a, uint b", Func = "mpz_tdiv_r_ui", Args = "ref a.S, b" },
-            
             new OpDef { Op = "&", Sig = "MPZ a, MPZ b", Func = "mpz_and", Args = "ref a.S, ref b.S" },
-            
             new OpDef { Op = "|", Sig = "MPZ a, MPZ b", Func = "mpz_ior", Args = "ref a.S, ref b.S" },
-            
             new OpDef { Op = "^", Sig = "MPZ a, MPZ b", Func = "mpz_xor", Args = "ref a.S, ref b.S" },
         },
         Gets = new []
         {
-            new GetDef { Name = "GetAbs", Sig = "", Func = "mpz_abs", Args = "ref S" },
+            new GetDef { Name = "Abs", Sig = "", Func = "mpz_abs", Args = "ref S" },
         },
         Funcs = new[]
         {

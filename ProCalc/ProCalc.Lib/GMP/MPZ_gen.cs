@@ -50,13 +50,27 @@ namespace ProCalc.Lib.GMP
         {
         }
 
+        internal MPZ(ref GMP.mpfr_t a) : this()
+        {
+            GMP.mpfr_get_z(ref S, ref a, MPFR.DefaultRnd);
+        }
+
+        public MPZ(MPFR a) : this(ref a.S)
+        {
+        }
+
         // Conversions:
+        public static explicit operator MPZ(MPQ a)
+        {
+            return new MPZ(a);
+        }
+
         public static explicit operator MPZ(MPF a)
         {
             return new MPZ(a);
         }
 
-        public static explicit operator MPZ(MPQ a)
+        public static explicit operator MPZ(MPFR a)
         {
             return new MPZ(a);
         }
@@ -96,24 +110,10 @@ namespace ProCalc.Lib.GMP
             return r;
         }
 
-        public static MPZ operator +(MPZ a, uint b)
-        {
-            var r = new MPZ();
-            GMP.mpz_add_ui(ref r.S, ref a.S, b);
-            return r;
-        }
-
         public static MPZ operator -(MPZ a, MPZ b)
         {
             var r = new MPZ();
             GMP.mpz_sub(ref r.S, ref a.S, ref b.S);
-            return r;
-        }
-
-        public static MPZ operator -(MPZ a, uint b)
-        {
-            var r = new MPZ();
-            GMP.mpz_sub_ui(ref r.S, ref a.S, b);
             return r;
         }
 
@@ -124,20 +124,6 @@ namespace ProCalc.Lib.GMP
             return r;
         }
 
-        public static MPZ operator *(MPZ a, int b)
-        {
-            var r = new MPZ();
-            GMP.mpz_mul_si(ref r.S, ref a.S, b);
-            return r;
-        }
-
-        public static MPZ operator *(MPZ a, uint b)
-        {
-            var r = new MPZ();
-            GMP.mpz_mul_ui(ref r.S, ref a.S, b);
-            return r;
-        }
-
         public static MPZ operator /(MPZ a, MPZ b)
         {
             var r = new MPZ();
@@ -145,24 +131,10 @@ namespace ProCalc.Lib.GMP
             return r;
         }
 
-        public static MPZ operator /(MPZ a, uint b)
-        {
-            var r = new MPZ();
-            GMP.mpz_tdiv_q_ui(ref r.S, ref a.S, b);
-            return r;
-        }
-
         public static MPZ operator %(MPZ a, MPZ b)
         {
             var r = new MPZ();
             GMP.mpz_tdiv_r(ref r.S, ref a.S, ref b.S);
-            return r;
-        }
-
-        public static MPZ operator %(MPZ a, uint b)
-        {
-            var r = new MPZ();
-            GMP.mpz_tdiv_r_ui(ref r.S, ref a.S, b);
             return r;
         }
 
@@ -188,7 +160,7 @@ namespace ProCalc.Lib.GMP
         }
 
         // Funcs:
-        public MPZ GetAbs()
+        public MPZ Abs()
         {
             var r = new MPZ();
             GMP.mpz_abs(ref r.S, ref S);

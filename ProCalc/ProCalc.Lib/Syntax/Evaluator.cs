@@ -12,14 +12,14 @@ namespace ProCalc.Lib.Syntax
     /// </summary>
     internal class Evaluator
     {
-        private Stack<MPQ> m_Vals = new Stack<MPQ>();
+        private Stack<dynamic> m_Vals = new Stack<dynamic>();
 
         public bool HasResult
         {
             get { return m_Vals.Count == 1; }
         }
 
-        public MPQ Result
+        public dynamic Result
         {
             get { return m_Vals.Peek(); }
         }
@@ -49,6 +49,22 @@ namespace ProCalc.Lib.Syntax
         // TODO: better function lookup:
         public void ApplyFunction(Token t, int arity)
         {
+            if (arity == 1)
+            {
+                var a = m_Vals.Pop();
+                switch (t.Value)
+                {
+                    case "sqrt":
+                        a = Sqrt(a);
+                        break;
+                    default:
+                        goto error;
+                }
+                m_Vals.Push(a);
+                return;
+            }
+
+            error:
             throw new ParsingException($"unknown function: {t.Value}/{arity}", t);
         }
 
@@ -95,14 +111,38 @@ namespace ProCalc.Lib.Syntax
 
         private MPQ ParseNumber(Token t)
         {
-            try
+            var num = new MPZ(0);
+            var den = new MPZ(1);
+
+            bool afterDec = false;
+
+            foreach (var c in t.Value)
             {
-                return new MPQ(t.Value);
+                switch (c)
+                {
+                    case '.':
+                        afterDec = true;
+                        break;
+                    default:
+                        break;
+                    case '0':
+                    case '1':
+                    case '2':
+                    case '3':
+                    case '4':
+                    case '5':
+                    case '6':
+                    case '7':
+                    case '8':
+                    case '9':
+                        num.Mul(10).Add(c - '0');
+                        if (afterDec)
+                            den.Mul(10);
+                        break;
+                }
             }
-            catch (FormatException)
-            {
-                throw new ParsingException("internal error", t);
-            }
+
+            return new MPQ(num, den);
         }
 
         #region MPQ
@@ -132,9 +172,43 @@ namespace ProCalc.Lib.Syntax
             return -a;
         }
 
-        private static MPQ Abs(MPQ a)
+        private static MPFR Sqrt(MPQ a)
         {
-            return a.GetAbs();
+            return new MPFR(a).Sqrt();
+        }
+
+        #endregion
+
+        #region MPFR
+
+        private static MPFR Add(MPFR a, MPFR b)
+        {
+            return a + b;
+        }
+
+        private static MPFR Sub(MPFR a, MPFR b)
+        {
+            return a - b;
+        }
+
+        private static MPFR Mul(MPFR a, MPFR b)
+        {
+            return a * b;
+        }
+
+        private static MPFR Div(MPFR a, MPFR b)
+        {
+            return a / b;
+        }
+
+        private static MPFR Negate(MPFR a)
+        {
+            return -a;
+        }
+
+        private static MPFR Sqrt(MPFR a)
+        {
+            return a.Sqrt();
         }
 
         #endregion

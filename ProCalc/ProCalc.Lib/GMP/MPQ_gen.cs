@@ -70,6 +70,17 @@ namespace ProCalc.Lib.GMP
         {
         }
 
+        internal MPQ(ref GMP.mpz_t a, ref GMP.mpz_t b) : this()
+        {
+            GMP.mpz_set(ref S._mp_num, ref a);
+            GMP.mpz_set(ref S._mp_den, ref b);
+            GMP.mpq_canonicalize(ref S);
+        }
+
+        public MPQ(MPZ a, MPZ b) : this(ref a.S, ref b.S)
+        {
+        }
+
         // Conversions:
         public static implicit operator MPQ(MPZ a)
         {
@@ -138,14 +149,14 @@ namespace ProCalc.Lib.GMP
         }
 
         // Funcs:
-        public MPQ GetAbs()
+        public MPQ Abs()
         {
             var r = new MPQ();
             GMP.mpq_abs(ref r.S, ref S);
             return r;
         }
 
-        public MPQ GetInv()
+        public MPQ Inv()
         {
             var r = new MPQ();
             GMP.mpq_inv(ref r.S, ref S);

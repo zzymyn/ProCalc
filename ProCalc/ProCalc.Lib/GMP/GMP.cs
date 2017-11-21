@@ -28,5 +28,52 @@ namespace ProCalc.Lib.GMP
             internal int _mp_exp;
             internal IntPtr _mp_d;
         }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct mpfr_t
+        {
+            internal int _mpfr_prec;
+            internal int _mpfr_sign;
+            internal int _mpfr_exp;
+            internal IntPtr _mpfr_d;
+        }
+
+        internal enum mpfr_rnd_t : int
+        {
+            /// <summary>
+            /// round to nearest, with ties to even
+            /// </summary>
+            MPFR_RNDN = 0,
+
+            /// <summary>
+            /// round toward zero
+            /// </summary>
+            MPFR_RNDZ,
+
+            /// <summary>
+            /// round toward +Inf
+            /// </summary>
+            MPFR_RNDU,
+
+            /// <summary>
+            /// round toward -Inf
+            /// </summary>
+            MPFR_RNDD,
+
+            /// <summary>
+            /// round away from zero
+            /// </summary>
+            MPFR_RNDA,
+
+            /// <summary>
+            /// faithful rounding (not implemented yet)
+            /// </summary>
+            MPFR_RNDF,
+
+            /// <summary>
+            /// round to nearest, with ties away from zero (mpfr_round)
+            /// </summary>
+            MPFR_RNDNA = -1
+        }
     }
 }

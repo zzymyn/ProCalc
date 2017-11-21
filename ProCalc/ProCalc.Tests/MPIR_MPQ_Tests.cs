@@ -38,6 +38,12 @@ namespace ProCalc.Tests
         }
 
         [TestMethod]
+        public void FromMPZTest()
+        {
+            Assert.AreEqual("1/10", new MPQ(new MPZ(1), new MPZ(10)).ToString());
+        }
+
+        [TestMethod]
         public void ArithTests()
         {
             {

@@ -17,12 +17,12 @@ namespace ProCalc.Lib.Syntax
         {
         }
 
-        public static MPQ Evaluate(string expression)
+        public static dynamic Evaluate(string expression)
         {
             return new Parser().EvaluateExpression(Lexer.Lex(expression));
         }
 
-        private MPQ EvaluateExpression(IEnumerable<Token> tokens)
+        private dynamic EvaluateExpression(IEnumerable<Token> tokens)
         {
             var e = tokens.GetEnumerator();
             e.MoveNext();

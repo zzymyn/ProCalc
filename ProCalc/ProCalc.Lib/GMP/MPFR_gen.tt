@@ -1,0 +1,83 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#
+    var classDef = new ClassDef()
+    {
+        Name = "MPFR",
+        Inits = new []
+        {
+            new InitDef { Sig = "int a", Chain = ": this()", Func = "mpfr_set_si", Args = "a, DefaultRnd" },
+            new InitDef { Sig = "uint a", Chain = ": this()", Func = "mpfr_set_ui", Args = "a, DefaultRnd" },
+            new InitDef { Sig = "float a", Chain = ": this()", Func = "mpfr_set_flt", Args = "a, DefaultRnd" },
+            new InitDef { Sig = "double a", Chain = ": this()", Func = "mpfr_set_d", Args = "a, DefaultRnd" },
+            new InitDef { Sig = "long a", Chain = ": this(a.ToString())" },
+            new InitDef { Sig = "ulong a", Chain = ": this(a.ToString())" },
+            new InitDef { Access = "internal", Sig = "ref GMP.mpfr_t a", Chain = ": this()", Func = "mpfr_set", Args = "ref a, DefaultRnd" },
+            new InitDef { Sig = "MPFR a", Chain = ": this(ref a.S)" },
+            new InitDef { Access = "internal", Sig = "ref GMP.mpz_t a", Chain = ": this()", Func = "mpfr_set_z", Args = "ref a, DefaultRnd" },
+            new InitDef { Sig = "MPZ a", Chain = ": this(ref a.S)" },
+            new InitDef { Access = "internal", Sig = "ref GMP.mpq_t a", Chain = ": this()", Func = "mpfr_set_q", Args = "ref a, DefaultRnd" },
+            new InitDef { Sig = "MPQ a", Chain = ": this(ref a.S)" },
+            new InitDef { Access = "internal", Sig = "ref GMP.mpf_t a", Chain = ": this()", Func = "mpfr_set_f", Args = "ref a, DefaultRnd" },
+            new InitDef { Sig = "MPF a", Chain = ": this(ref a.S)" },
+        },
+        Convs = new []
+        {
+            new ConvDef { Type = "MPZ", Mode = "explicit", },
+            new ConvDef { Type = "MPQ", Mode = "explicit", },
+            new ConvDef { Type = "MPF", Mode = "explicit", },
+            new ConvDef { Type = "int", Mode = "implicit", },
+            new ConvDef { Type = "uint", Mode = "implicit", },
+            new ConvDef { Type = "long", Mode = "implicit", },
+            new ConvDef { Type = "ulong", Mode = "implicit", },
+            new ConvDef { Type = "float", Mode = "explicit", },
+            new ConvDef { Type = "double", Mode = "explicit", },
+        },
+        Ops = new []
+        {
+            new OpDef { Op = "-", Sig = "MPFR a", Func = "mpfr_neg", Args = "ref a.S, DefaultRnd" },
+            new OpDef { Op = "+", Sig = "MPFR a, MPFR b", Func = "mpfr_add", Args = "ref a.S, ref b.S, DefaultRnd" },
+            new OpDef { Op = "-", Sig = "MPFR a, MPFR b", Func = "mpfr_sub", Args = "ref a.S, ref b.S, DefaultRnd" },
+            new OpDef { Op = "*", Sig = "MPFR a, MPFR b", Func = "mpfr_mul", Args = "ref a.S, ref b.S, DefaultRnd" },
+            new OpDef { Op = "/", Sig = "MPFR a, MPFR b", Func = "mpfr_div", Args = "ref a.S, ref b.S, DefaultRnd" },
+        },
+        Gets = new []
+        {
+            new GetDef { Name = "Abs", Sig = "", Func = "mpfr_abs", Args = "ref S, DefaultRnd" },
+            new GetDef { Name = "Sqrt", Sig = "", Func = "mpfr_sqrt", Args = "ref S, DefaultRnd" },
+            new GetDef { Name = "CubicRoot", Sig = "", Func = "mpfr_cbrt", Args = "ref S, DefaultRnd" },
+            new GetDef { Name = "Pow", Sig = "MPFR b", Func = "mpfr_pow ", Args = "ref S, ref b.S, DefaultRnd" },
+            new GetDef { Name = "Log", Sig = "", Func = "mpfr_log", Args = "ref S, DefaultRnd" },
+            new GetDef { Name = "Log2", Sig = "", Func = "mpfr_log2", Args = "ref S, DefaultRnd" },
+            new GetDef { Name = "Log10", Sig = "", Func = "mpfr_log10", Args = "ref S, DefaultRnd" },
+            new GetDef { Name = "Exp", Sig = "", Func = "mpfr_exp", Args = "ref S, DefaultRnd" },
+            new GetDef { Name = "Exp2", Sig = "", Func = "mpfr_exp2", Args = "ref S, DefaultRnd" },
+            new GetDef { Name = "Exp10", Sig = "", Func = "mpfr_exp10", Args = "ref S, DefaultRnd" },
+            new GetDef { Name = "Cos", Sig = "", Func = "mpfr_cos", Args = "ref S, DefaultRnd" },
+            new GetDef { Name = "Sin", Sig = "", Func = "mpfr_sin", Args = "ref S, DefaultRnd" },
+            new GetDef { Name = "Tan", Sig = "", Func = "mpfr_tan", Args = "ref S, DefaultRnd" },
+            new GetDef { Name = "Sec", Sig = "", Func = "mpfr_sec", Args = "ref S, DefaultRnd" },
+            new GetDef { Name = "Csc", Sig = "", Func = "mpfr_csc", Args = "ref S, DefaultRnd" },
+            new GetDef { Name = "Cot", Sig = "", Func = "mpfr_cot", Args = "ref S, DefaultRnd" },
+            new GetDef { Name = "ACos", Sig = "", Func = "mpfr_acos", Args = "ref S, DefaultRnd" },
+            new GetDef { Name = "ASin", Sig = "", Func = "mpfr_asin", Args = "ref S, DefaultRnd" },
+            new GetDef { Name = "ATan", Sig = "", Func = "mpfr_atan", Args = "ref S, DefaultRnd" },
+            new GetDef { Name = "ATan2", Sig = "MPFR b", Func = "mpfr_atan2", Args = "ref S, ref b.S, DefaultRnd" },
+            new GetDef { Name = "Cosh", Sig = "", Func = "mpfr_cosh", Args = "ref S, DefaultRnd" },
+            new GetDef { Name = "Sinh", Sig = "", Func = "mpfr_sinh", Args = "ref S, DefaultRnd" },
+            new GetDef { Name = "Tanh", Sig = "", Func = "mpfr_tanh", Args = "ref S, DefaultRnd" },
+            new GetDef { Name = "Sech", Sig = "", Func = "mpfr_sech", Args = "ref S, DefaultRnd" },
+            new GetDef { Name = "Csch", Sig = "", Func = "mpfr_csch", Args = "ref S, DefaultRnd" },
+            new GetDef { Name = "Coth", Sig = "", Func = "mpfr_coth", Args = "ref S, DefaultRnd" },
+            new GetDef { Name = "ACosh", Sig = "", Func = "mpfr_acosh", Args = "ref S, DefaultRnd" },
+            new GetDef { Name = "ASinh", Sig = "", Func = "mpfr_asinh", Args = "ref S, DefaultRnd" },
+            new GetDef { Name = "ATanh", Sig = "", Func = "mpfr_atanh", Args = "ref S, DefaultRnd" },
+        },
+    };
+#>
+<#@ include file="std_gen.tt" #>

@@ -1,28 +1,41 @@
-﻿<#@ template debug="false" hostspecific="true" language="C#" #>
-<#@ output extension=".cs" #>
-<#@ assembly name="System.Core" #>
-<#@ import namespace="System.IO" #>
-<#@ import namespace="System.Linq" #>
-<#@ import namespace="System.Text" #>
-<#@ import namespace="System.Text.RegularExpressions" #>
-<#@ import namespace="System.Collections.Generic" #>
-<#@ assembly name="EnvDTE" #>
+﻿<#@ template debug="false" hostspecific="true" language="C#"#>
+<#@ output extension=".cs"#>
+<#@ assembly name="System.Core"#>
+<#@ import namespace="System.IO"#>
+<#@ import namespace="System.Linq"#>
+<#@ import namespace="System.Text"#>
+<#@ import namespace="System.Text.RegularExpressions"#>
+<#@ import namespace="System.Collections.Generic"#>
+<#@ assembly name="EnvDTE"#>
 <#
 
-var GMPRegex = new Regex(@"
-    __GMP_DECLSPEC
-    \s*
-    (?<ReturnType>[ _a-zA-Z0-9*/]+?)
-    \s*
-    (?<Name>\w+)
-    \s*
-    \((?<Args>[ _a-zA-Z0-9*.]+)(,\s*(?<Args>[ _a-zA-Z0-9*.]+))*\)
-    (\s*\w+)*
-    ", RegexOptions.IgnorePatternWhitespace);
+    var dte = (EnvDTE.DTE) ((IServiceProvider)Host).GetService(typeof(EnvDTE.DTE));
+    var solutionDir = Path.GetDirectoryName(dte.Solution.FullName);
 
-var dte = (EnvDTE.DTE) ((IServiceProvider)Host).GetService(typeof(EnvDTE.DTE));
-var solutionDir = Path.GetDirectoryName(dte.Solution.FullName);
-var mpirHeader = Path.Combine(solutionDir, "..", "gmp", "gmp.h");
+    var gmpHeader = Path.Combine(solutionDir, "..", "gmp", "gmp.h");
+    var mpfrHeader = Path.Combine(solutionDir, "..", "gmp", "mpfr.h");
+
+    var gmpRegex = new Regex(@"
+        __GMP_DECLSPEC
+        \s*
+        (?<ReturnType>[ _a-zA-Z0-9*/]+?)
+        \s*
+        (?<Name>\w+)
+        \s*
+        \((?<Args>[ _a-zA-Z0-9*.]+)(,\s*(?<Args>[ _a-zA-Z0-9*.]+))*\)
+        ", RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled | RegexOptions.Multiline);
+
+    var mpfrRegex = new Regex(@"
+        __MPFR_DECLSPEC
+        \s*
+        (?<ReturnType>[ _a-zA-Z0-9*/]+?)
+        \s*
+        (?<Name>\w+)
+        \s*
+        _MPFR_PROTO
+        \s*
+        \(\((?<Args>[ _a-zA-Z0-9*.]+)(,\s*(?<Args>[ _a-zA-Z0-9*.]+))*\)\)
+        ", RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled | RegexOptions.Multiline);
 
 #>
 using System;
@@ -34,52 +47,105 @@ namespace ProCalc.Lib.GMP
     internal static partial class GMP
     {
 <#
-
-foreach (var line in File.ReadLines(mpirHeader))
-{
-    var m = GMPRegex.Match(line);
-    if (!m.Success)
-        continue;
-
-    var name = m.Groups["Name"].Value;
-    var returnType = ConvertReturnType(m.Groups["ReturnType"].Value);
-    var args = m.Groups["Args"].Captures.Cast<Capture>()
-        .Select(a => ConvertArgType(a.Value));
-
-    if (string.IsNullOrEmpty(returnType) || args.Any(a => string.IsNullOrEmpty(a)))
+    ProcessFile(gmpHeader, gmpRegex, f =>
     {
 #>
-        // Skipped <#= name #> - <#= string.Join(",", m.Groups["Args"].Captures.Cast<Capture>().Select(a => a.Value)) #> => <#= m.Groups["ReturnType"].Value #>
+        // Skipped <#=f.Name#> - <#=f.RawArgTypes#> => <#=f.RawReturnType#>
 <#
-        continue;
-    }
-
-    var argsWithNames = AddArgNames(args);
-
+    },
+    f =>
+    {
 #>
-        [DllImport("libgmp-10.dll", EntryPoint = "__g<#=name#>")]
-        internal static extern <#= returnType #> <#= name #>(<#= string.Join(", ", argsWithNames) #>);
+        [DllImport("libgmp-10.dll", EntryPoint = "__g<#=f.Name#>")]
+        internal static extern <#=f.ReturnType#> <#=f.Name#>(<#=f.ArgWithNames#>);
 <#
-}
+    });
 
+    ProcessFile(mpfrHeader, mpfrRegex, f =>
+    {
+#>
+        // Skipped <#=f.Name#> - <#=f.RawArgTypes#> => <#=f.RawReturnType#>
+<#
+    },
+    f =>
+    {
+#>
+        [DllImport("libmpfr-4.dll", EntryPoint = "<#=f.Name#>")]
+        internal static extern <#=f.ReturnType#> <#=f.Name#>(<#=f.ArgWithNames#>);
+<#
+    });
 #>
     }
 }
 
 <#+
 
+class ArgDef
+{
+    public string RawType;
+    public string Type;
+    public string Name = "";
+}
+
+class FuncDef
+{
+    public string Name;
+    public string RawReturnType;
+    public string ReturnType;
+    public List<ArgDef> Args = new List<ArgDef>();
+
+    public string RawArgTypes { get { return string.Join(",", Args.Select(a => a.RawType)); } }
+    public string ArgWithNames { get { return string.Join(", ", Args.Select(a => a.Type + " " + a.Name)); } }
+}
+
+void ProcessFile(string file, Regex regex, Action<FuncDef> onSkipped, Action<FuncDef> onFunc)
+{
+    foreach (var m in regex.Matches(File.ReadAllText(file)).Cast<Match>())
+    {
+        var funcDef = new FuncDef();
+
+        funcDef.Name = m.Groups["Name"].Value;
+        funcDef.RawReturnType = m.Groups["ReturnType"].Value;
+        funcDef.ReturnType = ConvertReturnType(funcDef.RawReturnType);
+
+        foreach (var c in m.Groups["Args"].Captures.Cast<Capture>())
+        {
+            var argDef = new ArgDef();
+            argDef.RawType = c.Value;
+            argDef.Type = ConvertArgType(argDef.RawType);
+            if (argDef.Type != "__arglist" && argDef.Type != " ")
+            {
+                argDef.Name = "a" + funcDef.Args.Count.ToString();
+            }
+            funcDef.Args.Add(argDef);
+        }
+
+        if (string.IsNullOrEmpty(funcDef.ReturnType) || funcDef.Args.Any(a => string.IsNullOrEmpty(a.Type)))
+        {
+            onSkipped(funcDef);
+            continue;
+        }
+
+        onFunc(funcDef);
+    }
+}
+
 string ConvertReturnType(string mpirType)
 {
-    switch (mpirType)
+    switch (mpirType.Replace(" *", "*"))
     {
     case "void":
         return "void";
-    case "char *":
+    case "mpfr_rnd_t":
+        return "mpfr_rnd_t";
+    case "__gmp_const char*":
+        return "string";
+    case "char*":
         return "/* char* */ IntPtr";
-    case "void *":
+    case "void*":
         return "/* void* */ IntPtr";
     case "mp_bitcnt_t":
-        return "ulong";
+        return "uint";
     case "mp_limb_t":
         return "ulong";
     case "size_t":
@@ -88,7 +154,13 @@ string ConvertReturnType(string mpirType)
         return "uint";
     case "unsigned long":
         return "uint";
-    case "/* signed */ long int":
+    case "unsigned int":
+        return "uint";
+    case "mpfr_exp_t":
+        return "int";
+    case "mpfr_prec_t":
+        return "int";
+    case "/* signed*/ long int":
         return "int";
     case "signed long int":
         return "int";
@@ -100,6 +172,8 @@ string ConvertReturnType(string mpirType)
         return "int";
     case "double":
         return "double";
+    case "float":
+        return "float";
     default:
         return null;
     }
@@ -107,13 +181,15 @@ string ConvertReturnType(string mpirType)
 
 string ConvertArgType(string mpirType)
 {
-    switch (mpirType)
+    switch (mpirType.Replace(" *", "*"))
     {
     case "...":
         return "__arglist";
     case "void":
         return " ";
     case "mpz_ptr":
+        return "[In, Out] ref mpz_t";
+    case "mpz_ptr z":
         return "[In, Out] ref mpz_t";
     case "mpz_srcptr":
         return "[In] ref mpz_t";
@@ -125,47 +201,71 @@ string ConvertArgType(string mpirType)
         return "[In, Out] ref mpq_t";
     case "mpq_srcptr":
         return "[In] ref mpq_t";
-    case "const char *":
+    case "mpfr_ptr":
+        return "[In, Out] ref mpfr_t";
+    case "mpfr_srcptr":
+        return "[In] ref mpfr_t";
+    case "mpfr_srcptr f":
+        return "[In] ref mpfr_t";
+    case "mpfr_rnd_t":
+        return "mpfr_rnd_t";
+    case "__gmp_const char*":
         return "string";
-    case "char *":
+    case "const char*":
+        return "string";
+    case "char*":
         return "StringBuilder";
-    case "const void *":
+    case "const void*":
         return "/* const void* */ IntPtr";
-    case "void *":
+    case "void*":
         return "/* void* */ IntPtr";
     case "mp_bitcnt_t":
-        return "ulong";
+        return "uint";
     case "mp_limb_t":
         return "ulong";
     case "mp_exp_t":
         return "int";
-    case "mp_exp_t *":
+    case "mp_exp_t*":
         return "ref int";
     case "mp_size_t":
         return "int";
-    case "mp_size_t *":
+    case "mp_size_t*":
         return "ref int";
     case "unsigned long int":
         return "uint";
     case "unsigned long":
         return "uint";
+    case "unsigned int":
+        return "uint";
+    case "mpfr_exp_t":
+        return "int";
+    case "mpfr_exp_t*":
+        return "ref int";
+    case "mpfr_prec_t":
+        return "int";
     case "signed long int":
         return "int";
-    case "signed long int *":
+    case "signed long int*":
         return "ref int";
-    case "/* signed */ long int":
+    case "/* signed*/ long int":
         return "int";
     case "long int":
         return "int";
     case "long":
         return "int";
+    case "long*":
+        return "ref int";
     case "int":
         return "int";
+    case "int*":
+        return "ref int";
     case "double":
         return "double";
+    case "float":
+        return "float";
     case "size_t":
         return "ulong";
-    case "size_t *":
+    case "size_t*":
         return "ref ulong";
     default:
         return "";

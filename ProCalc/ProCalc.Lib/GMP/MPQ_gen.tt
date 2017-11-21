@@ -26,6 +26,8 @@
             new InitDef { Sig = "MPQ a", Chain = ": this(ref a.S)" },
             new InitDef { Access = "internal", Sig = "ref GMP.mpz_t a", Chain = ": this()", Func = "mpq_set_z", Args = "ref a", Extras = stdExtras },
             new InitDef { Sig = "MPZ a", Chain = ": this(ref a.S)" },
+            new InitDef { Access = "internal", Sig = "ref GMP.mpz_t a, ref GMP.mpz_t b", Chain = ": this()", Extras = new [] { "GMP.mpz_set(ref S._mp_num, ref a);", "GMP.mpz_set(ref S._mp_den, ref b);" }.Concat(stdExtras).ToArray() },
+            new InitDef { Sig = "MPZ a, MPZ b", Chain = ": this(ref a.S, ref b.S)" },
         },
         Convs = new []
         {
@@ -39,19 +41,15 @@
         Ops = new []
         {
             new OpDef { Op = "-", Sig = "MPQ a", Func = "mpq_neg", Args = "ref a.S" },
-            
             new OpDef { Op = "+", Sig = "MPQ a, MPQ b", Func = "mpq_add", Args = "ref a.S, ref b.S" },
-            
             new OpDef { Op = "-", Sig = "MPQ a, MPQ b", Func = "mpq_sub", Args = "ref a.S, ref b.S" },
-            
             new OpDef { Op = "*", Sig = "MPQ a, MPQ b", Func = "mpq_mul", Args = "ref a.S, ref b.S" },
-            
             new OpDef { Op = "/", Sig = "MPQ a, MPQ b", Func = "mpq_div", Args = "ref a.S, ref b.S" },
         },
         Gets = new []
         {
-            new GetDef { Name = "GetAbs", Sig = "", Func = "mpq_abs", Args = "ref S" },
-            new GetDef { Name = "GetInv", Sig = "", Func = "mpq_inv", Args = "ref S" },
+            new GetDef { Name = "Abs", Sig = "", Func = "mpq_abs", Args = "ref S" },
+            new GetDef { Name = "Inv", Sig = "", Func = "mpq_inv", Args = "ref S" },
         },
         Funcs = new[]
         {

@@ -9,6 +9,7 @@ namespace ProCalc.UI
     {
         public Calc()
         {
+            MPFR.DefaultPrecision = 256;
             InitializeComponent();
         }
 
@@ -21,7 +22,7 @@ namespace ProCalc.UI
             try
             {
                 var result = Parser.Evaluate(m_Eq.Text);
-                m_Result.Text = new MPF(result).ToHuman();
+                m_Result.Text = result.ToString();
             }
             catch (ParsingException e)
             {
