@@ -86,6 +86,19 @@ namespace ProCalc.Lib.GMP
             return sb.ToString();
         }
 
+        public MPQ TrySqrt()
+        {
+            var sqrt = new MPQ();
+            var rem = new MPZ();
+            GMP.mpz_sqrtrem(ref sqrt.S._mp_num, ref rem.S, ref S._mp_num);
+            if (rem != 0)
+                return null;
+            GMP.mpz_sqrtrem(ref sqrt.S._mp_den, ref rem.S, ref S._mp_den);
+            if (rem != 0)
+                return null;
+            return sqrt;
+        }
+
         public void Dispose()
         {
             Free();

@@ -166,7 +166,7 @@ namespace ProCalc.Lib.Syntax
 
             if (aQ != null)
             {
-                return ((MPFR)aQ).Sqrt();
+                return (object)aQ.TrySqrt() ?? ((MPFR)aQ).Sqrt();
             }
             else if (aF != null)
             {
