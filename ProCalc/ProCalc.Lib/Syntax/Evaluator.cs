@@ -1,25 +1,22 @@
-﻿using ProCalc.Lib.GMP;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ProCalc.Lib.GMP;
 
 namespace ProCalc.Lib.Syntax
 {
     /// <summary>
     /// Simple stack-based evaluator, expects calls in postfix order, eg 1 1 + for "1 + 1".
     /// </summary>
-    internal class Evaluator
+    internal partial class Evaluator
     {
-        private Stack<dynamic> m_Vals = new Stack<dynamic>();
+        private Stack<object> m_Vals = new Stack<object>();
 
         public bool HasResult
         {
             get { return m_Vals.Count == 1; }
         }
 
-        public dynamic Result
+        public object Result
         {
             get { return m_Vals.Peek(); }
         }
@@ -145,72 +142,38 @@ namespace ProCalc.Lib.Syntax
             return new MPQ(num, den);
         }
 
-        #region MPQ
-
-        private static MPQ Add(MPQ a, MPQ b)
+        private static object Negate(object a)
         {
-            return a + b;
+            var aQ = a as MPQ;
+            var aF = a as MPFR;
+
+            if (aQ != null)
+            {
+                return -aQ;
+            }
+            else if (aF != null)
+            {
+                return -aF;
+            }
+
+            throw new Exception("internal error");
         }
 
-        private static MPQ Sub(MPQ a, MPQ b)
+        private static object Sqrt(object a)
         {
-            return a - b;
+            var aQ = a as MPQ;
+            var aF = a as MPFR;
+
+            if (aQ != null)
+            {
+                return ((MPFR)aQ).Sqrt();
+            }
+            else if (aF != null)
+            {
+                return aF.Sqrt();
+            }
+
+            throw new Exception("internal error");
         }
-
-        private static MPQ Mul(MPQ a, MPQ b)
-        {
-            return a * b;
-        }
-
-        private static MPQ Div(MPQ a, MPQ b)
-        {
-            return a / b;
-        }
-
-        private static MPQ Negate(MPQ a)
-        {
-            return -a;
-        }
-
-        private static MPFR Sqrt(MPQ a)
-        {
-            return new MPFR(a).Sqrt();
-        }
-
-        #endregion
-
-        #region MPFR
-
-        private static MPFR Add(MPFR a, MPFR b)
-        {
-            return a + b;
-        }
-
-        private static MPFR Sub(MPFR a, MPFR b)
-        {
-            return a - b;
-        }
-
-        private static MPFR Mul(MPFR a, MPFR b)
-        {
-            return a * b;
-        }
-
-        private static MPFR Div(MPFR a, MPFR b)
-        {
-            return a / b;
-        }
-
-        private static MPFR Negate(MPFR a)
-        {
-            return -a;
-        }
-
-        private static MPFR Sqrt(MPFR a)
-        {
-            return a.Sqrt();
-        }
-
-        #endregion
     }
 }

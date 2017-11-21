@@ -1,0 +1,77 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#"#>
+<#@ output extension=".cs"#>
+<#@ assembly name="System.Core"#>
+<#@ import namespace="System.IO"#>
+<#@ import namespace="System.Linq"#>
+<#@ import namespace="System.Text"#>
+<#@ import namespace="System.Collections.Generic"#>
+<#
+
+    var ops = new []
+    {
+        new OpDef { Name = "Add", Op = "+" },
+        new OpDef { Name = "Sub", Op = "-" },
+        new OpDef { Name = "Mul", Op = "*" },
+        new OpDef { Name = "Div", Op = "/" },
+    };
+
+#>
+using System;
+using System.Collections.Generic;
+using ProCalc.Lib.GMP;
+
+namespace ProCalc.Lib.Syntax
+{
+    internal partial class Evaluator
+    {
+<#
+    foreach (var op in ops)
+    {
+#>
+        private static object <#=op.Name#>(object a, object b)
+        {
+            var aQ = a as MPQ;
+            var aF = a as MPFR;
+            var bQ = b as MPQ;
+            var bF = b as MPFR;
+
+            if (aQ != null)
+            {
+                if (bQ != null)
+                {
+                    return aQ <#=op.Op#> bQ;
+                }
+                else if (bF != null)
+                {
+                    return (MPFR)aQ <#=op.Op#> bF;
+                }
+            }
+            else if (aF != null)
+            {
+                if (bQ != null)
+                {
+                    return aF <#=op.Op#> (MPFR)bQ;
+                }
+                else if (bF != null)
+                {
+                    return aF <#=op.Op#> bF;
+                }
+            }
+
+            throw new Exception("internal error");
+        }
+
+<#
+    }
+#>
+    }
+}
+<#+
+
+class OpDef
+{
+    public string Name = null;
+    public string Op = null;
+}
+
+#>

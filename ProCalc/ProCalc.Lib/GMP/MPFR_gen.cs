@@ -355,6 +355,30 @@ namespace ProCalc.Lib.GMP
             return r;
         }
 
+        public MPFR Add(MPFR b)
+        {
+            GMP.mpfr_add(ref S, ref S, ref b.S, DefaultRnd);
+            return this;
+        }
+
+        public MPFR Sub(MPFR b)
+        {
+            GMP.mpfr_sub(ref S, ref S, ref b.S, DefaultRnd);
+            return this;
+        }
+
+        public MPFR Mul(MPFR b)
+        {
+            GMP.mpfr_mul(ref S, ref S, ref b.S, DefaultRnd);
+            return this;
+        }
+
+        public MPFR Div(MPFR b)
+        {
+            GMP.mpfr_div(ref S, ref S, ref b.S, DefaultRnd);
+            return this;
+        }
+
         // Comparison ops:
         public static bool operator <(MPFR a, MPFR b)
         {
@@ -378,11 +402,23 @@ namespace ProCalc.Lib.GMP
 
         public static bool operator ==(MPFR a, MPFR b)
         {
+            if (ReferenceEquals(a, b))
+                return true;
+            if (ReferenceEquals(a, null))
+                return false;
+            if (ReferenceEquals(b, null))
+                return false;
             return a.CompareTo(b) == 0;
         }
 
         public static bool operator !=(MPFR a, MPFR b)
         {
+            if (ReferenceEquals(a, b))
+                return false;
+            if (ReferenceEquals(a, null))
+                return true;
+            if (ReferenceEquals(b, null))
+                return true;
             return a.CompareTo(b) != 0;
         }
 

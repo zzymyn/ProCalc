@@ -78,6 +78,14 @@
             new GetDef { Name = "ASinh", Sig = "", Func = "mpfr_asinh", Args = "ref S, DefaultRnd" },
             new GetDef { Name = "ATanh", Sig = "", Func = "mpfr_atanh", Args = "ref S, DefaultRnd" },
         },
+        Funcs = new[]
+        {
+            new FuncDef { Name = "Add", Sig = "MPFR b", Func = "mpfr_add", Args = "ref S, ref b.S, DefaultRnd" },
+            new FuncDef { Name = "Sub", Sig = "MPFR b", Func = "mpfr_sub", Args = "ref S, ref b.S, DefaultRnd" },
+            new FuncDef { Name = "Mul", Sig = "MPFR b", Func = "mpfr_mul", Args = "ref S, ref b.S, DefaultRnd" },
+            new FuncDef { Name = "Div", Sig = "MPFR b", Func = "mpfr_div", Args = "ref S, ref b.S, DefaultRnd" },
+        },
+
     };
 #>
 <#@ include file="std_gen.tt" #>
